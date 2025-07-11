@@ -1,229 +1,226 @@
-SendIT Courier System
-Project Overview
-SendIT is a full-stack courier management platform designed to streamline parcel delivery operations. It provides a user-friendly interface for individuals to send and receive parcels, track their orders in real-time, and receive timely notifications. For administrators, SendIT offers robust tools to manage delivery operations, create new orders, update parcel statuses, and oversee all users and parcels within the system.
+# 📦 ParcelPilot Courier System
 
-The primary goal of SendIT is to enhance efficiency and transparency in parcel delivery, ensuring a seamless experience for both users and administrators.
+ParcelPilot is a full-stack courier management platform built to streamline parcel delivery operations for individuals and administrators. Designed with modern web technologies, it provides a seamless user experience for managing parcel orders, real-time delivery tracking, and notifications.
 
-Features
-User Features
-Account Management: Secure registration and login with robust validation.
 
-Personal Parcel Tracking:
+## 🚀 Project Overview
 
-View all parcels sent by the user.
+**ParcelPilot** offers a robust set of features to improve transparency, efficiency, and user engagement in courier services.
+It consists of:
 
-View all parcels received by the user.
+* A **user portal** for sending, receiving, and tracking parcels.
+* An **admin dashboard** for managing users, parcels, and delivery statuses.
+* A responsive frontend with maps, image uploads, and dynamic feedback.
+* A scalable backend supporting secure APIs, file handling, and background email/SMS services.
 
-Real-time Notifications: Receive email/SMS notifications for all parcel status updates (e.g., pending, in-transit, delivered).
+## 🧩 Features
 
-Welcome Email: Automated welcome email upon successful registration.
+### 👤 User Features
 
-Admin Features
-Parcel Management: Create new parcel delivery orders.
+* **Secure Authentication:** Register and login with JWT-based auth.
+* **Parcel Dashboard:**
 
-Status Updates: Update the delivery status of any parcel (e.g., pending, in-transit, delivered).
+  * View all parcels sent by the user.
+  * View all parcels received by the user.
+* **Real-time Notifications:** Email and SMS alerts on parcel status changes (pending, in-transit, delivered).
+* **Welcome Email:** Automatically sent after successful registration.
 
-Comprehensive View: View all users and all parcels registered in the system.
+### 🛠️ Admin Features
 
-Notification Triggering: Manually trigger real-time delivery notifications to senders and receivers.
+* **Parcel Management:** Create and update parcel delivery orders.
+* **Status Control:** Change parcel delivery status with real-time notification triggers.
+* **User Oversight:** View all registered users and their parcels.
+* **Communication Control:** Manually trigger notifications if needed.
 
-General Features
-Map Integration: Visualize pickup and destination locations with markers using the Google Maps API.
+### 🌍 General System Features
 
-Role-Based Access Control: Secure access to features based on user roles (Admin/User).
+* **Map Integration:** Google Maps API shows pickup and destination locations with markers.
+* **Image Uploads:** Integrated Cloudinary support for parcel-related media.
+* **Role-Based Access Control:** Secure user/admin separation at route and feature level.
+* **Search & Pagination:** Efficient navigation through large data sets.
+* **Dynamic Notification Component:** Unified success/error feedback for a smooth UX.
 
-Dynamic Notification System: A unified component for displaying success and error messages across the application.
+## 🧱 Tech Stack
 
-Search & Pagination: Efficiently search and paginate through lists of users and parcels.
+### 🔧 Backend
 
-Image Uploads: Integrated Cloudinary service for managing parcel-related images.
+* **Framework:** NestJS
+* **Database:** PostgreSQL
+* **ORM:** Prisma
+* **Authentication:** JWT (with role-based guards)
+* **Validation:** JOI DTO schemas
+* **Email Service:** Nodemailer
+* **SMS Service:** Twilio
+* **Cloud Storage:** Cloudinary
+* **Soft Delete Support:** Prisma-level logic for recoverable deletions
 
-Tech Stack
-Frontend
-Framework: Angular (latest stable version)
+### 🎨 Frontend
 
-State Management: NgRx
+* **Framework:** Angular
+* **Styling:** SCSS
+* **State Management:** NgRx
+* **Forms:** Template-driven for login, reactive for all others
+* **Mapping:** Google Maps API
+* **File Uploads:** Cloudinary integration
+* **UX Enhancements:** Pipes, directives, guards, lazy loading, dynamic feedback
 
-Styling: SCSS
+---
 
-Mapping: Google Maps API
+## 📁 Folder Structure
 
-File Uploads: Cloudinary integration for image uploads
+### Backend (`sendit-backend/`)
 
-Backend
-Framework: NestJS
-
-Database: PostgreSQL
-
-ORM: Prisma
-
-Authentication: JWT (JSON Web Tokens)
-
-Email & SMS: Nodemailer / SMS API (e.g., Twilio)
-
-File Uploads: Cloudinary service
-
-Folder Structure
-The project is divided into two main repositories: sendit-backend (NestJS) and sendit-frontend (Angular).
-
-Backend (sendit-backend/)
+```
 sendit-backend/
-│
-├── prisma/                        # Prisma schema & migrations
+├── prisma/                # Prisma schema and migrations
 ├── src/
-│   ├── auth/                      # JWT auth, login, register
-│   ├── users/                     # User management (CRUD)
-│   ├── parcels/                   # Parcel CRUD, status updates
-│   ├── notifications/            # Email/SMS service (Nodemailer/Twilio)
-│   ├── cloudinary/               # Cloudinary file upload service
-│   ├── shared/                   # Reusable utilities, guards, decorators, filters
-│   ├── config/                   # Environment configuration
-│   ├── app.module.ts             # Root module
-│   └── main.ts                   # Entry point
-├── .env                          # Environment variables
-├── tsconfig.json
-├── package.json
-└── README.md
+│   ├── auth/              # JWT auth, login, register
+│   ├── users/             # User management
+│   ├── parcels/           # Parcel logic and status updates
+│   ├── notifications/     # Email & SMS services
+│   ├── cloudinary/        # Cloudinary service module
+│   ├── shared/            # Guards, decorators, filters
+│   ├── config/            # Environment and validation
+│   ├── app.module.ts      # App root module
+│   └── main.ts            # Entry point
+├── .env
+└── package.json
+```
 
-Frontend (sendit-frontend/)
+### Frontend (`sendit-frontend/`)
+
+```
 sendit-frontend/
-│
 ├── src/
 │   ├── app/
-│   │   ├── core/                       # Singleton services, guards, interceptors, models
-│   │   ├── shared/                     # Shared UI components, pipes, directives, modules
-│   │   ├── auth/                       # Login, register, password reset
-│   │   ├── user/                       # End-user specific features (dashboard, sent/received parcels)
-│   │   ├── admin/                      # Admin specific features (manage users, parcels, reports)
-│   │   ├── parcels/                    # Parcel CRUD (can be used by both admin for creation and user for viewing details)
-│   │   ├── store/                      # NgRx state management slices
-│   │   ├── app-routing.module.ts       # Main application routing
-│   │   └── app.module.ts               # Root application module
-├── environments/                     # Environment-specific configurations
-├── assets/                           # Static assets (icons, images, logos)
-├── index.html                        # Main HTML file
-├── styles.scss                       # Global styles
-├── angular.json                      # Angular CLI configuration
-├── tsconfig.json                     # TypeScript configuration
-└── package.json                      # Project dependencies
+│   │   ├── core/          # Guards, services, models
+│   │   ├── shared/        # UI components, directives, pipes
+│   │   ├── auth/          # Login/Register
+│   │   ├── user/          # Sent/received parcels
+│   │   ├── admin/         # Manage users and parcels
+│   │   ├── parcels/       # Parcel creation, detail view
+│   │   ├── store/         # NgRx slices
+│   │   ├── app-routing.module.ts
+│   │   └── app.module.ts
+├── environments/          # API and Map keys
+├── assets/
+└── styles.scss
+```
 
-Getting Started
-Follow these instructions to set up and run the SendIT Courier System on your local machine.
+---
 
-Prerequisites
-Node.js (LTS version recommended)
+## 🛠️ Getting Started
 
-npm (comes with Node.js)
+### 🔑 Prerequisites
 
-PostgreSQL
+* Node.js (LTS)
+* PostgreSQL
+* Angular CLI (`npm install -g @angular/cli`)
+* NestJS CLI (`npm install -g @nestjs/cli`)
 
-Angular CLI (npm install -g @angular/cli)
 
-NestJS CLI (npm install -g @nestjs/cli)
+## 📦 Backend Setup
 
-1. Backend Setup
-Clone the repository:
-
+```bash
 git clone <your-backend-repo-url> sendit-backend
 cd sendit-backend
-
-Install dependencies:
-
 npm install
+```
 
-Configure Environment Variables:
-Create a .env file in the sendit-backend root directory and add the following:
+### Environment Configuration
 
+Create a `.env` file in the root with:
+
+```env
 DATABASE_URL="postgresql://user:password@localhost:5432/sendit_db?schema=public"
 JWT_SECRET="your_jwt_secret_key"
-CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
-CLOUDINARY_API_KEY="your_cloudinary_api_key"
-CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
-EMAIL_SERVICE_HOST="smtp.your-email-provider.com"
+
+CLOUDINARY_CLOUD_NAME="your_cloud_name"
+CLOUDINARY_API_KEY="your_api_key"
+CLOUDINARY_API_SECRET="your_api_secret"
+
+EMAIL_SERVICE_HOST="smtp.example.com"
 EMAIL_SERVICE_PORT="587"
 EMAIL_SERVICE_USER="your_email@example.com"
 EMAIL_SERVICE_PASS="your_email_password"
-# For SMS, if using Twilio:
-TWILIO_ACCOUNT_SID="your_twilio_account_sid"
-TWILIO_AUTH_TOKEN="your_twilio_auth_token"
-TWILIO_PHONE_NUMBER="your_twilio_phone_number"
 
-Replace placeholder values with your actual credentials.
+TWILIO_ACCOUNT_SID="your_twilio_sid"
+TWILIO_AUTH_TOKEN="your_twilio_token"
+TWILIO_PHONE_NUMBER="+1234567890"
+```
 
-Database Setup:
+### Database & Server Start
 
-Ensure your PostgreSQL server is running.
-
-Create a database named sendit_db.
-
-Run Prisma migrations to set up the database schema:
-
+```bash
 npx prisma migrate dev --name init
-
-Start the Backend Server:
-
 npm run start:dev
+# API available at http://localhost:3000
+```
 
-The backend server will typically run on http://localhost:3000.
 
-2. Frontend Setup
-Clone the repository:
+## 🌐 Frontend Setup
 
+```bash
 git clone <your-frontend-repo-url> sendit-frontend
 cd sendit-frontend
-
-Install dependencies:
-
 npm install
+```
 
-Configure Environment Variables:
-Open src/environments/environment.ts and src/environments/environment.prod.ts and update the apiUrl and googleMapsApiKey as follows:
+### Configure Environment
 
-// src/environments/environment.ts
+Edit `src/environments/environment.ts`:
+
+```ts
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000', // Or your deployed backend URL
+  apiUrl: 'http://localhost:3000',
   googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
-  cloudinaryCloudName: 'your_cloudinary_cloud_name' // If needed directly in frontend
+  cloudinaryCloudName: 'your_cloudinary_cloud_name'
 };
+```
 
-Replace YOUR_GOOGLE_MAPS_API_KEY with your actual Google Maps API key.
+### Launch App
 
-Start the Frontend Application:
-
+```bash
 ng serve
+# App available at http://localhost:4200
+```
 
-The frontend application will typically run on http://localhost:4200.
+---
 
-Usage
-Once both the backend and frontend servers are running:
+## 🧪 Usage
 
-Navigate to http://localhost:4200 in your web browser.
+1. Open `http://localhost:4200` in your browser.
+2. Register a new account.
+3. Login to the system.
+4. View parcels you’ve sent and received.
+5. If you’re an admin, access admin features like parcel creation, status updates, and user management.
 
-Register a new user account.
+---
 
-Login with your new credentials.
+## 👥 Contributing
 
-Explore the user dashboard to view sent/received parcels.
+1. Fork the repository.
+2. Create a new feature branch:
 
-If you have admin privileges (configured in the database), you can access the admin panel to manage users and parcels.
+   ```bash
+   git checkout -b feature/your-feature
+   ```
+3. Make changes, commit, and push:
 
-Contributing
-Contributions are welcome! Please follow these steps:
+   ```bash
+   git commit -m "Added feature"
+   git push origin feature/your-feature
+   ```
+4. Open a Pull Request.
 
-Fork the repository.
 
-Create a new branch (git checkout -b feature/your-feature-name).
+## 📄 License
 
-Make your changes.
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
-Commit your changes (git commit -m 'Add new feature').
+---
 
-Push to the branch (git push origin feature/your-feature-name).
+## ❤️ Authors
 
-Open a Pull Request.
-
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Developed with ❤️ by Mark Otwane
+**ParcelPilot Courier System** — Developed with passion by Mark Otwane.
