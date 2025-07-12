@@ -70,6 +70,16 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## SMS Notifications (Twilio)
+
+To enable SMS notifications, set the following environment variables in your `.env` file:
+
+```
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_phone_number
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
