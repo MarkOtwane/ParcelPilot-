@@ -1,0 +1,33 @@
+<div class="parcels" *ngIf="!isLoading; else loading">
+  <h2>My Parcels</h2>
+
+  <div class="parcel-section">
+    <h3>Sent Parcels</h3>
+    <div *ngIf="sent.length > 0; else noSent">
+      <div class="parcel-card" *ngFor="let p of sent">
+        <strong>To:</strong> {{ p.destination }}<br />
+        <strong>Status:</strong> {{ p.status }}<br />
+        <strong>Weight:</strong> {{ p.weight }} kg<br />
+        <strong>Cost:</strong> KES {{ p.cost }}
+      </div>
+    </div>
+    <ng-template #noSent><p>No sent parcels found.</p></ng-template>
+  </div>
+
+  <div class="parcel-section">
+    <h3>Received Parcels</h3>
+    <div *ngIf="received.length > 0; else noReceived">
+      <div class="parcel-card" *ngFor="let p of received">
+        <strong>From:</strong> {{ p.pickupLocation }}<br />
+        <strong>Status:</strong> {{ p.status }}<br />
+        <strong>Weight:</strong> {{ p.weight }} kg<br />
+        <strong>Cost:</strong> KES {{ p.cost }}
+      </div>
+    </div>
+    <ng-template #noReceived><p>No received parcels found.</p></ng-template>
+  </div>
+</div>
+
+<ng-template #loading>
+  <p>Loading your parcels...</p>
+</ng-template>

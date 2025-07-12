@@ -1,0 +1,17 @@
+<div class="reset-update-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="reset-form">
+    <h2>Set New Password</h2>
+
+    <label>New Password</label>
+    <input type="password" formControlName="newPassword" placeholder="********" />
+    <div class="error" *ngIf="form.get('newPassword')?.invalid && form.get('newPassword')?.touched">
+      Password must be at least 6 characters.
+    </div>
+
+    <button type="submit" [disabled]="form.invalid || isLoading">
+      {{ isLoading ? 'Resetting...' : 'Reset Password' }}
+    </button>
+
+    <a routerLink="/login">Back to login</a>
+  </form>
+</div>

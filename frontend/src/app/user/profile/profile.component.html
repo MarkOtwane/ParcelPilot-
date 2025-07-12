@@ -1,0 +1,33 @@
+<div class="profile-container" *ngIf="!isLoading; else loading">
+  <h2>User Profile</h2>
+
+  <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+    <label>Name</label>
+    <input type="text" formControlName="name" />
+
+    <label>Phone</label>
+    <input type="text" formControlName="phone" />
+
+    <button type="submit" [disabled]="profileForm.invalid">Update Profile</button>
+  </form>
+
+  <hr />
+
+  <h3>Change Password</h3>
+
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+    <label>Current Password</label>
+    <input type="password" formControlName="currentPassword" />
+
+    <label>New Password</label>
+    <input type="password" formControlName="newPassword" />
+
+    <button type="submit" [disabled]="passwordForm.invalid || isPasswordUpdating">
+      {{ isPasswordUpdating ? 'Updating...' : 'Change Password' }}
+    </button>
+  </form>
+</div>
+
+<ng-template #loading>
+  <p>Loading profile...</p>
+</ng-template>

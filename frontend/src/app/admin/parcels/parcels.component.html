@@ -1,0 +1,25 @@
+<div class="admin-parcels" *ngIf="!isLoading; else loading">
+  <h2>Manage Parcels</h2>
+
+  <div *ngIf="parcels.length > 0; else noParcels">
+    <div class="parcel-card" *ngFor="let p of parcels">
+      <p><strong>ID:</strong> {{ p.id }}</p>
+      <p><strong>From:</strong> {{ p.pickupLocation }}</p>
+      <p><strong>To:</strong> {{ p.destination }}</p>
+      <p><strong>Weight:</strong> {{ p.weight }} kg</p>
+      <p><strong>Status:</strong> 
+        <select [value]="p.status" (change)="updateStatus(p.id, $event.target.value)">
+          <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+        </select>
+      </p>
+    </div>
+  </div>
+
+  <ng-template #noParcels>
+    <p>No parcels found.</p>
+  </ng-template>
+</div>
+
+<ng-template #loading>
+  <p>Loading parcels...</p>
+</ng-template>

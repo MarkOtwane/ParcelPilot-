@@ -1,0 +1,21 @@
+<div class="payments" *ngIf="!isLoading; else loading">
+  <h2>My Payments</h2>
+
+  <div *ngIf="payments.length > 0; else noPayments">
+    <div class="payment-card" *ngFor="let p of payments">
+      <p><strong>Parcel:</strong> {{ p.parcel?.destination }}</p>
+      <p><strong>Amount:</strong> KES {{ p.amount }}</p>
+      <p><strong>Method:</strong> {{ p.method }}</p>
+      <p><strong>Status:</strong> {{ p.status }}</p>
+      <p><strong>Date:</strong> {{ p.createdAt | date: 'medium' }}</p>
+    </div>
+  </div>
+
+  <ng-template #noPayments>
+    <p>No payments found.</p>
+  </ng-template>
+</div>
+
+<ng-template #loading>
+  <p>Loading your payments...</p>
+</ng-template>

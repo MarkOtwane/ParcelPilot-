@@ -1,0 +1,33 @@
+<div class="admin-users" *ngIf="!isLoading; else loading">
+  <h2>Manage Users</h2>
+
+  <div *ngIf="users.length > 0; else noUsers">
+    <div class="user-card" *ngFor="let u of users">
+      <p><strong>Name:</strong> {{ u.name }}</p>
+      <p><strong>Email:</strong> {{ u.email }}</p>
+      <p><strong>Phone:</strong> {{ u.phone }}</p>
+      <p><strong>Role:</strong> {{ u.role }}</p>
+      <p>
+        <strong>Status:</strong>
+        <span [ngClass]="{ 'active': !u.deletedAt, 'deactivated': u.deletedAt }">
+          {{ u.deletedAt ? 'DEACTIVATED' : 'ACTIVE' }}
+        </span>
+      </p>
+      <button
+        (click)="deactivateUser(u.id)"
+        [disabled]="u.deletedAt"
+        *ngIf="!u.deletedAt"
+      >
+        Deactivate
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noUsers>
+    <p>No users found.</p>
+  </ng-template>
+</div>
+
+<ng-template #loading>
+  <p>Loading users...</p>
+</ng-template>

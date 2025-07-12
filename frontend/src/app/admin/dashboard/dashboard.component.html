@@ -1,0 +1,26 @@
+<div class="admin-dashboard" *ngIf="!isLoading; else loading">
+  <h2>Admin Dashboard</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Users</h3>
+      <p>{{ stats.users }}</p>
+    </div>
+    <div class="card">
+      <h3>Total Parcels</h3>
+      <p>{{ stats.parcels }}</p>
+    </div>
+    <div class="card">
+      <h3>Delivered Parcels</h3>
+      <p>{{ stats.completedParcels }}</p>
+    </div>
+    <div class="card total">
+      <h3>Total Payments</h3>
+      <p>KES {{ stats.totalPayments | number:'1.0-0' }}</p>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <p>Loading dashboard stats...</p>
+</ng-template>

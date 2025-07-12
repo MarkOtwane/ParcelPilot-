@@ -1,0 +1,26 @@
+.admin-payments {
+  padding: 2rem;
+
+  h2 {
+    margin-bottom: 2rem;
+  }
+
+  .payment-card {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #009688;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: #333;
+
+      strong {
+        color: #222;
+      }
+    }
+  }
+}

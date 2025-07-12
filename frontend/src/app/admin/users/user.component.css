@@ -1,0 +1,49 @@
+.admin-users {
+  padding: 2rem;
+
+  h2 {
+    margin-bottom: 2rem;
+  }
+
+  .user-card {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #4caf50;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    p {
+      margin: 0.5rem 0;
+    }
+
+    .active {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    .deactivated {
+      color: #f44336;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 0.5rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #f44336;
+      color: white;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #d32f2f;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

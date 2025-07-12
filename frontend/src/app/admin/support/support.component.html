@@ -1,0 +1,34 @@
+<div class="admin-support" *ngIf="!isLoading; else loading">
+  <h2>Support Tickets</h2>
+
+  <div *ngIf="tickets.length > 0; else noTickets">
+    <div class="ticket-card" *ngFor="let t of tickets">
+      <p><strong>Email:</strong> {{ t.email }}</p>
+      <p><strong>Message:</strong> {{ t.message }}</p>
+      <p><strong>Date:</strong> {{ t.createdAt | date: 'short' }}</p>
+
+      <div *ngIf="t.response; else respondForm">
+        <p class="response"><strong>Response:</strong> {{ t.response }}</p>
+      </div>
+
+      <ng-template #respondForm>
+        <div *ngIf="respondingId === t.id; else respondBtn">
+          <textarea [(ngModel)]="responseText" rows="3" placeholder="Type your reply..."></textarea>
+          <button (click)="sendResponse(t.id)">Send</button>
+          <button (click)="respondingId = null" class="cancel">Cancel</button>
+        </div>
+        <ng-template #respondBtn>
+          <button (click)="startResponding(t.id)">Respond</button>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+
+  <ng-template #noTickets>
+    <p>No tickets submitted yet.</p>
+  </ng-template>
+</div>
+
+<ng-template #loading>
+  <p>Loading support tickets...</p>
+</ng-template>

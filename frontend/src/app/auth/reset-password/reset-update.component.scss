@@ -1,0 +1,66 @@
+.reset-update-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+
+  .reset-form {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.2rem 0 1rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.8rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #673ab7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #5e35b1;
+      }
+    }
+
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #673ab7;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
