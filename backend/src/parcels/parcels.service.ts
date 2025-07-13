@@ -40,23 +40,33 @@ export class ParcelsService {
       },
     });
 
-    await this.mailer.sendParcelCreatedEmail(
-      sender.email,
-      receiver.email,
-      parcel,
-    );
-    // Send SMS notifications
+    // Send email notification (non-blocking)
+    this.mailer
+      .sendParcelCreatedEmail(sender.email, receiver.email, parcel)
+      .catch((error) => {
+        console.error('Failed to send parcel created email:', error.message);
+      });
+
+    // Send SMS notifications (non-blocking)
     if (sender.phone) {
-      await this.mailer.sendSms(
-        sender.phone,
-        `Your parcel has been created. Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}, Cost: KES ${parcel.cost}`,
-      );
+      this.mailer
+        .sendSms(
+          sender.phone,
+          `Your parcel has been created. Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}, Cost: KES ${parcel.cost}`,
+        )
+        .catch((error) => {
+          console.error('Failed to send SMS to sender:', error.message);
+        });
     }
     if (receiver.phone) {
-      await this.mailer.sendSms(
-        receiver.phone,
-        `A parcel is on its way to you! Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}`,
-      );
+      this.mailer
+        .sendSms(
+          receiver.phone,
+          `A parcel is on its way to you! Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}`,
+        )
+        .catch((error) => {
+          console.error('Failed to send SMS to receiver:', error.message);
+        });
     }
 
     return parcel;
@@ -91,23 +101,34 @@ export class ParcelsService {
       data: { status: dto.status },
     });
 
-    await this.mailer.sendParcelStatusUpdateEmail(
-      parcel.sender.email,
-      parcel.receiver.email,
-      dto.status,
-    );
-    // Send SMS notifications
+    // Send email notification (non-blocking)
+    this.mailer
+      .sendParcelStatusUpdateEmail(
+        parcel.sender.email,
+        parcel.receiver.email,
+        dto.status,
+      )
+      .catch((error) => {
+        console.error('Failed to send status update email:', error.message);
+      });
+
+    // Send SMS notifications (non-blocking)
     if (parcel.sender.phone) {
-      await this.mailer.sendSms(
-        parcel.sender.phone,
-        `Parcel status updated: ${dto.status}`,
-      );
+      this.mailer
+        .sendSms(parcel.sender.phone, `Parcel status updated: ${dto.status}`)
+        .catch((error) => {
+          console.error('Failed to send status SMS to sender:', error.message);
+        });
     }
     if (parcel.receiver.phone) {
-      await this.mailer.sendSms(
-        parcel.receiver.phone,
-        `Parcel status updated: ${dto.status}`,
-      );
+      this.mailer
+        .sendSms(parcel.receiver.phone, `Parcel status updated: ${dto.status}`)
+        .catch((error) => {
+          console.error(
+            'Failed to send status SMS to receiver:',
+            error.message,
+          );
+        });
     }
 
     return updated;
