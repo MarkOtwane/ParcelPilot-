@@ -28,7 +28,7 @@ export class CreateParcelComponent {
     private router: Router
   ) {
     this.parcelForm = this.fb.group({
-      receiverId: ['', [Validators.required]],
+      receiverEmail: ['', [Validators.required, Validators.email]],
       pickupLocation: ['', [Validators.required]],
       destination: ['', [Validators.required]],
       weight: ['', [Validators.required, Validators.min(0.1)]],
@@ -48,8 +48,23 @@ export class CreateParcelComponent {
           this.router.navigate(['/user/my-parcels']);
         }, 2000);
       } catch (error: any) {
-        this.error =
-          error.error?.message || 'Failed to create parcel. Please try again.';
+        console.error('Parcel creation error:', error);
+        
+        // Handle different error formats
+        if (typeof error === 'string') {
+          this.error = error;
+        } else if (error?.error?.message?.message) {
+          // Backend error format: { success: false, message: { message: "...", statusCode: 401 } }
+          this.error = error.error.message.message;
+        } else if (error?.error?.message) {
+          this.error = error.error.message;
+        } else if (error?.message) {
+          this.error = error.message;
+        } else if (error?.error) {
+          this.error = typeof error.error === 'string' ? error.error : 'Failed to create parcel';
+        } else {
+          this.error = 'Failed to create parcel. Please try again.';
+        }
       } finally {
         this.loading = false;
       }

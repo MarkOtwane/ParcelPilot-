@@ -5,27 +5,36 @@
       <p>Fill in the details below to create a new parcel delivery</p>
     </div>
 
-    <form [formGroup]="parcelForm" (ngSubmit)="onSubmit()" class="create-parcel-form">
+    <form
+      [formGroup]="parcelForm"
+      (ngSubmit)="onSubmit()"
+      class="create-parcel-form"
+    >
       <div class="form-group">
-        <label for="receiverId">Receiver ID</label>
+        <label for="receiverEmail">Receiver Email</label>
         <input
-          type="text"
-          id="receiverId"
-          formControlName="receiverId"
-          placeholder="Enter receiver ID"
+          type="email"
+          id="receiverEmail"
+          formControlName="receiverEmail"
+          placeholder="Enter receiver email"
           class="form-control"
           [class.error]="
-            parcelForm.get('receiverId')?.invalid && parcelForm.get('receiverId')?.touched
+            parcelForm.get('receiverEmail')?.invalid &&
+            parcelForm.get('receiverEmail')?.touched
           "
         />
         <div
           class="error-message"
           *ngIf="
-            parcelForm.get('receiverId')?.invalid && parcelForm.get('receiverId')?.touched
+            parcelForm.get('receiverEmail')?.invalid &&
+            parcelForm.get('receiverEmail')?.touched
           "
         >
-          <span *ngIf="parcelForm.get('receiverId')?.errors?.['required']"
-            >Receiver ID is required</span
+          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['required']"
+            >Receiver email is required</span
+          >
+          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['email']"
+            >Please enter a valid email address</span
           >
         </div>
       </div>
@@ -39,13 +48,15 @@
           placeholder="Enter pickup location"
           class="form-control"
           [class.error]="
-            parcelForm.get('pickupLocation')?.invalid && parcelForm.get('pickupLocation')?.touched
+            parcelForm.get('pickupLocation')?.invalid &&
+            parcelForm.get('pickupLocation')?.touched
           "
         />
         <div
           class="error-message"
           *ngIf="
-            parcelForm.get('pickupLocation')?.invalid && parcelForm.get('pickupLocation')?.touched
+            parcelForm.get('pickupLocation')?.invalid &&
+            parcelForm.get('pickupLocation')?.touched
           "
         >
           <span *ngIf="parcelForm.get('pickupLocation')?.errors?.['required']"
@@ -63,13 +74,15 @@
           placeholder="Enter destination"
           class="form-control"
           [class.error]="
-            parcelForm.get('destination')?.invalid && parcelForm.get('destination')?.touched
+            parcelForm.get('destination')?.invalid &&
+            parcelForm.get('destination')?.touched
           "
         />
         <div
           class="error-message"
           *ngIf="
-            parcelForm.get('destination')?.invalid && parcelForm.get('destination')?.touched
+            parcelForm.get('destination')?.invalid &&
+            parcelForm.get('destination')?.touched
           "
         >
           <span *ngIf="parcelForm.get('destination')?.errors?.['required']"
@@ -88,13 +101,15 @@
           class="form-control"
           step="0.1"
           [class.error]="
-            parcelForm.get('weight')?.invalid && parcelForm.get('weight')?.touched
+            parcelForm.get('weight')?.invalid &&
+            parcelForm.get('weight')?.touched
           "
         />
         <div
           class="error-message"
           *ngIf="
-            parcelForm.get('weight')?.invalid && parcelForm.get('weight')?.touched
+            parcelForm.get('weight')?.invalid &&
+            parcelForm.get('weight')?.touched
           "
         >
           <span *ngIf="parcelForm.get('weight')?.errors?.['required']"
@@ -124,4 +139,4 @@
       </button>
     </form>
   </div>
-</div> 
+</div>

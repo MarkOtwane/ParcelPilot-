@@ -21,7 +21,7 @@ export class ParcelsService {
       where: { id: senderId },
     });
     const receiver = await this.prisma.user.findUnique({
-      where: { id: dto.receiverId },
+      where: { email: dto.receiverEmail.toLowerCase() },
     });
 
     if (!sender) throw new NotFoundException('Sender not found');
@@ -32,7 +32,7 @@ export class ParcelsService {
     const parcel = await this.prisma.parcel.create({
       data: {
         senderId,
-        receiverId: dto.receiverId,
+        receiverId: receiver.id,
         pickupLocation: dto.pickupLocation,
         destination: dto.destination,
         weight: dto.weight,

@@ -13,15 +13,18 @@ import { MailerService } from './mailer.service';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         transport: {
-          host: config.get<string>('MAIL_HOST'),
-          port: config.get<number>('MAIL_PORT'),
+          service: 'gmail',
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false, // true for 465, false for other ports
           auth: {
-            user: config.get<string>('MAIL_USER'),
-            pass: config.get<string>('MAIL_PASS'),
+            user: config.get<string>('GMAIL_USER') || 'your-email@gmail.com',
+            pass:
+              config.get<string>('GMAIL_APP_PASSWORD') || 'your-app-password',
           },
         },
         defaults: {
-          from: config.get<string>('MAIL_FROM'),
+          from: `"ParcelPilot" <${config.get<string>('GMAIL_USER') || 'your-email@gmail.com'}>`,
         },
         template: {
           dir: join(__dirname, 'templates'),

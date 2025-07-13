@@ -54,7 +54,7 @@ export class AuthService {
 
     return {
       message: 'User registered successfully.',
-      access_token: this.generateJwt(user.id, user.role),
+      access_token: this.generateJwt(user.id, user.role, user.email),
     };
   }
 
@@ -74,7 +74,7 @@ export class AuthService {
 
     return {
       message: 'Login successful.',
-      access_token: this.generateJwt(user.id, user.role),
+      access_token: this.generateJwt(user.id, user.role, user.email),
     };
   }
 
@@ -87,7 +87,7 @@ export class AuthService {
       throw new NotFoundException('No account associated with that email.');
     }
 
-    const token = this.generateJwt(user.id, user.role, '15m');
+    const token = this.generateJwt(user.id, user.role, user.email, '15m');
 
     await this.mailer.sendResetPasswordEmail(user.email, token);
 
@@ -112,7 +112,7 @@ export class AuthService {
     return { message: 'Password updated successfully.' };
   }
 
-  private generateJwt(userId: string, role: Role, expiresIn = '7d') {
-    return this.jwtService.sign({ sub: userId, role }, { expiresIn });
+  private generateJwt(userId: string, role: Role, email: string, expiresIn = '7d') {
+    return this.jwtService.sign({ sub: userId, role, email }, { expiresIn });
   }
 }
