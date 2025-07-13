@@ -1,50 +1,58 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { Router } from '@angular/router';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['./login.component.css'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
 })
 export class LoginComponent {
-  isLoading = false;
-
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
+  loginForm: FormGroup;
+  loading = false;
+  error = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private notify: NotificationService,
     private router: Router
-  ) {}
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
 
   async onSubmit() {
-    if (this.form.invalid) return;
+    if (this.loginForm.valid) {
+      this.loading = true;
+      this.error = '';
 
-    this.isLoading = true;
+      try {
+        const result = await this.authService.login(
+          this.loginForm.value.email,
+          this.loginForm.value.password
+        );
 
-    try {
-      const { email, password } = this.form.value;
-      const res = await this.authService.login(email!, password!);
-      this.notify.success('Login successful!');
-
-      const role = res.role;
-
-      if (role === 'ADMIN') {
-        this.router.navigate(['/admin/dashboard']);
-      } else {
-        this.router.navigate(['/user/dashboard']);
+        if (result.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user']);
+        }
+      } catch (error: any) {
+        this.error = error.error?.message || 'Login failed. Please try again.';
+      } finally {
+        this.loading = false;
       }
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Login failed');
-    } finally {
-      this.isLoading = false;
     }
   }
 }

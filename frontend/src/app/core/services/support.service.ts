@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 const API = 'http://localhost:3000/support';
 
@@ -7,13 +8,15 @@ const API = 'http://localhost:3000/support';
 export class SupportService {
   constructor(private http: HttpClient) {}
 
-  getAllTickets(): Promise<any[]> {
-    return this.http.get<any[]>(API).toPromise();
+  async createTicket(data: any): Promise<any> {
+    return firstValueFrom(this.http.post(`${API}`, data));
   }
 
-  respondToTicket(ticketId: string, response: string): Promise<any> {
-    return this.http
-      .patch(`${API}/respond`, { ticketId, response })
-      .toPromise();
+  async getAllTickets(): Promise<any> {
+    return firstValueFrom(this.http.get(`${API}`));
+  }
+
+  async respondToTicket(ticketId: string, response: string): Promise<any> {
+    return firstValueFrom(this.http.post(`${API}/respond`, { ticketId, response }));
   }
 }

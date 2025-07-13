@@ -1,19 +1,19 @@
 import {
-  Controller,
-  Post,
-  Patch,
-  Get,
   Body,
-  UseGuards,
+  Controller,
+  Get,
+  Patch,
+  Post,
   Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ParcelsService } from './parcels.service';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.gurad';
+import { Roles } from '../shared/decorators/roles.decorator';
 import { CreateParcelDto } from './dto/create-parcel.dto';
 import { UpdateParcelStatusDto } from './dto/update-parcel-status.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../shared/decorators/roles.decorator';
-import { Role } from '@prisma/client';
+import { ParcelsService } from './parcels.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('parcels')
@@ -21,18 +21,24 @@ export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
   @Post('create')
-  createParcel(@Request() req, @Body() dto: CreateParcelDto) {
+  createParcel(
+    @Request() req: { user: { sub: string } },
+    @Body() dto: CreateParcelDto,
+  ) {
     return this.parcelsService.createParcel(req.user.sub, dto);
   }
 
   @Get('my')
-  listParcels(@Request() req) {
+  listParcels(@Request() req: { user: { sub: string } }) {
     return this.parcelsService.listUserParcels(req.user.sub);
   }
 
   @Roles(Role.ADMIN)
   @Patch('update-status')
-  updateStatus(@Request() req, @Body() dto: UpdateParcelStatusDto) {
+  updateStatus(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Body() dto: UpdateParcelStatusDto,
+  ) {
     return this.parcelsService.updateStatus(req.user.sub, dto, req.user.role);
   }
 }

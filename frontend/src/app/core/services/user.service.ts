@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 const API = 'http://localhost:3000/users';
 
@@ -7,27 +8,23 @@ const API = 'http://localhost:3000/users';
 export class UserService {
   constructor(private http: HttpClient) {}
 
-  getMyProfile(): Promise<any> {
-    return this.http.get(`${API}/me`).toPromise();
+  async getMyProfile(): Promise<any> {
+    return firstValueFrom(this.http.get(`${API}/me`));
   }
 
-  updateProfile(data: { name: string; phone: string }): Promise<any> {
-    return this.http.patch(`${API}/update`, data).toPromise();
+  async updateProfile(data: any): Promise<any> {
+    return firstValueFrom(this.http.patch(`${API}/update`, data));
   }
 
-  changePassword(data: {
-    currentPassword: string;
-    newPassword: string;
-  }): Promise<any> {
-    return this.http.patch(`${API}/change-password`, data).toPromise();
-  }
-  getAllUsers(): Promise<any[]> {
-    return this.http.get<any[]>('http://localhost:3000/users').toPromise();
+  async changePassword(data: any): Promise<any> {
+    return firstValueFrom(this.http.patch(`${API}/change-password`, data));
   }
 
-  deactivateUser(userId: string): Promise<void> {
-    return this.http
-      .delete<void>(`http://localhost:3000/users/deactivate/${userId}`)
-      .toPromise();
+  async deactivateAccount(): Promise<any> {
+    return firstValueFrom(this.http.delete(`${API}/deactivate`));
+  }
+
+  async getAllUsers(): Promise<any> {
+    return firstValueFrom(this.http.get(`${API}`));
   }
 }

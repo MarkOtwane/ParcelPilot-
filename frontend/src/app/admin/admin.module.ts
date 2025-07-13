@@ -1,37 +1,44 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import { AdminRoutingModule } from './admin-routing.module';
-
-import { NgChartsModule } from 'ng2-charts';
-
-
-
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ParcelsComponent } from './parcels/parcels.component';
-import { UsersComponent } from './users/users.component';
-import { PaymentsComponent } from './payments/payments.component';
-import { MetricsComponent } from './metrics/metrics.component';
-import { SupportComponent } from './support/support.component';
+const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
+  },
+  {
+    path: 'parcels',
+    loadComponent: () =>
+      import('./parcels/parcels.component').then((m) => m.ParcelsComponent),
+  },
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./users/users.component').then((m) => m.UsersComponent),
+  },
+  {
+    path: 'payments',
+    loadComponent: () =>
+      import('./payments/payments.component').then((m) => m.PaymentsComponent),
+  },
+  {
+    path: 'metrics',
+    loadComponent: () =>
+      import('./metrics/metrics.component').then((m) => m.MetricsComponent),
+  },
+  {
+    path: 'support',
+    loadComponent: () =>
+      import('./support/support.component').then((m) => m.SupportComponent),
+  },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+];
 
 @NgModule({
-  declarations: [
-    DashboardComponent,
-    ParcelsComponent,
-    UsersComponent,
-    PaymentsComponent,
-    MetricsComponent,
-    SupportComponent,
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    AdminRoutingModule,
-    NgChartsModule
-  
-  ],
+  imports: [CommonModule, RouterModule.forChild(routes)],
 })
 export class AdminModule {}

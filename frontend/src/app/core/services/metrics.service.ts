@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 const API = 'http://localhost:3000/metrics';
 
@@ -7,10 +8,7 @@ const API = 'http://localhost:3000/metrics';
 export class MetricsService {
   constructor(private http: HttpClient) {}
 
-  getDashboardStats(): Promise<any> {
-    return this.http.get<any>(API).toPromise();
-  }
-  getDashboardStats(): Promise<any> {
-    return this.http.get<any>('http://localhost:3000/metrics').toPromise();
+  async getMetrics(): Promise<any> {
+    return firstValueFrom(this.http.get(`${API}`));
   }
 }

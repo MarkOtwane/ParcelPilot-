@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   ForbiddenException,
   Injectable,
@@ -26,6 +24,7 @@ export class ParcelsService {
       where: { id: dto.receiverId },
     });
 
+    if (!sender) throw new NotFoundException('Sender not found');
     if (!receiver) throw new NotFoundException('Receiver not found');
 
     const cost = this.calculateCost(dto.weight);

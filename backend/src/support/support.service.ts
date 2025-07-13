@@ -27,4 +27,14 @@ export class SupportService {
   async getAll() {
     return this.prisma.supportTicket.findMany();
   }
+
+  async getAllTickets() {
+    try {
+      return await this.prisma.supportTicket.findMany({
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch (error) {
+      throw new Error('Failed to fetch support tickets');
+    }
+  }
 }

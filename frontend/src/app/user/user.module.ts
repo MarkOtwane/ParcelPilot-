@@ -1,21 +1,34 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProfileComponent } from './profile/profile.component';
-import { ParcelsComponent } from './parcels/parcels.component';
-import { PaymentsComponent } from './payments/payments.component';
-import { UserRoutingModule } from './user-routing.module';
+const routes: Routes = [
+  { 
+    path: '', 
+    loadComponent: () => import('./user-dashboard/user-dashboard.component').then(m => m.UserDashboardComponent)
+  },
+  { 
+    path: 'create-parcel', 
+    loadComponent: () => import('./create-parcel/create-parcel.component').then(m => m.CreateParcelComponent)
+  },
+  { 
+    path: 'my-parcels', 
+    loadComponent: () => import('./my-parcels/my-parcels.component').then(m => m.MyParcelsComponent)
+  },
+  { 
+    path: 'payments', 
+    loadComponent: () => import('./payments/payments.component').then(m => m.PaymentsComponent)
+  },
+  { 
+    path: 'support', 
+    loadComponent: () => import('./support/support.component').then(m => m.SupportComponent)
+  }
+];
 
 @NgModule({
-  declarations: [
-    DashboardComponent,
-    ProfileComponent,
-    ParcelsComponent,
-    PaymentsComponent,
-  ],
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, UserRoutingModule],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes)
+  ]
 })
-export class UserModule {}
+export class UserModule { }

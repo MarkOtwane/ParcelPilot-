@@ -1,0 +1,35 @@
+<div class="users-container">
+  <div class="users-header">
+    <h1>All Users</h1>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading users...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="users-content" *ngIf="!loading && !error">
+    <div class="users-grid" *ngIf="users.length > 0; else noUsers">
+      <div class="user-card" *ngFor="let user of users">
+        <div class="user-header">
+          <span class="user-id">#{{ user.id.slice(0, 8) }}</span>
+          <span class="user-role" [class]="'role-' + user.role.toLowerCase()">
+            {{ user.role }}
+          </span>
+        </div>
+        <div class="user-details">
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Name:</strong> {{ user.name || 'N/A' }}</p>
+          <p><strong>Phone:</strong> {{ user.phone || 'N/A' }}</p>
+          <p><strong>Created:</strong> {{ user.createdAt | date:'short' }}</p>
+        </div>
+      </div>
+    </div>
+    <ng-template #noUsers>
+      <p class="no-users">No users found.</p>
+    </ng-template>
+  </div>
+</div> 

@@ -1,41 +1,49 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ParcelService } from 'src/app/core/services/parcel.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import { ParcelService } from '../../core/services/parcel.service';
 
 @Component({
-  selector: 'app-admin-parcels',
+  selector: 'app-parcels',
   templateUrl: './parcels.component.html',
-  styleUrls: ['./parcels.component.scss'],
+  styleUrls: ['./parcels.component.css'],
+  standalone: true,
+  imports: [CommonModule],
 })
 export class ParcelsComponent implements OnInit {
-  isLoading = true;
   parcels: any[] = [];
+  loading = false;
+  isLoading = false;
+  error = '';
+  statusOptions = ['PENDING', 'IN_TRANSIT', 'DELIVERED', 'FAILED'];
 
-  statusOptions = ['PENDING', 'IN_TRANSIT', 'DELIVERED'];
-
-  constructor(
-    private parcelService: ParcelService,
-    private notify: NotificationService
-  ) {}
+  constructor(private parcelService: ParcelService) {}
 
   async ngOnInit() {
+    await this.loadParcels();
+  }
+
+  async loadParcels() {
+    this.loading = true;
+    this.isLoading = true;
+    this.error = '';
+
     try {
       this.parcels = await this.parcelService.getAllParcels();
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to load parcels.');
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to load parcels.';
     } finally {
+      this.loading = false;
       this.isLoading = false;
     }
   }
 
-  async updateStatus(parcelId: string, newStatus: string) {
+  async updateStatus(parcelId: string, status: string) {
     try {
-      await this.parcelService.updateStatus(parcelId, newStatus);
-      this.notify.success('Status updated!');
-      const parcel = this.parcels.find((p) => p.id === parcelId);
-      if (parcel) parcel.status = newStatus;
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to update status.');
+      await this.parcelService.updateStatus(parcelId, status);
+      // Reload parcels to get updated data
+      await this.loadParcels();
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to update parcel status.';
     }
   }
 }

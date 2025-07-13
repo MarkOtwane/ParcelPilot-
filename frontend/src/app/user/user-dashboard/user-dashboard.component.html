@@ -1,0 +1,48 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Welcome to ParcelPilot</h1>
+    <div class="user-info">
+      <span>Hello, {{ user?.name || "User" }}</span>
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </header>
+
+  <nav class="dashboard-nav">
+    <a routerLink="/user" routerLinkActive="active" class="nav-item">
+      <span>Dashboard</span>
+    </a>
+    <a
+      routerLink="/user/create-parcel"
+      routerLinkActive="active"
+      class="nav-item"
+    >
+      <span>Create Parcel</span>
+    </a>
+    <a routerLink="/user/my-parcels" routerLinkActive="active" class="nav-item">
+      <span>My Parcels</span>
+    </a>
+    <a routerLink="/user/payments" routerLinkActive="active" class="nav-item">
+      <span>Payments</span>
+    </a>
+    <a routerLink="/user/support" routerLinkActive="active" class="nav-item">
+      <span>Support</span>
+    </a>
+  </nav>
+
+  <main class="dashboard-content">
+    <div class="welcome-card">
+      <h2>Quick Actions</h2>
+      <div class="action-buttons">
+        <button routerLink="/user/create-parcel" class="btn-primary">
+          Create New Parcel
+        </button>
+        <button routerLink="/user/my-parcels" class="btn-secondary">
+          View My Parcels
+        </button>
+        <button routerLink="/user/support" class="btn-secondary">
+          Get Support
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

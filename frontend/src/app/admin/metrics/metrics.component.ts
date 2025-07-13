@@ -1,38 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { MetricsService } from 'src/app/core/services/metrics.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { CommonModule } from '@angular/common';
+import { MetricsService } from '../../core/services/metrics.service';
 
 @Component({
-  selector: 'app-admin-metrics',
+  selector: 'app-metrics',
   templateUrl: './metrics.component.html',
-  styleUrls: ['./metrics.component.scss'],
+  styleUrls: ['./metrics.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class MetricsComponent implements OnInit {
-  isLoading = true;
-  stats: any;
+  metrics: any = {};
+  stats: any = {};
+  loading = false;
+  isLoading = false;
+  error = '';
 
-  pieChartLabels: string[] = ['Pending', 'In Transit', 'Delivered'];
-  pieChartData: number[] = [];
-  pieChartType: ChartType = 'pie';
-
-  constructor(
-    private metricsService: MetricsService,
-    private notify: NotificationService
-  ) {}
+  constructor(private metricsService: MetricsService) {}
 
   async ngOnInit() {
-    try {
-      this.stats = await this.metricsService.getDashboardStats();
+    await this.loadMetrics();
+  }
 
-      this.pieChartData = [
-        this.stats.pendingParcels || 0,
-        this.stats.inTransitParcels || 0,
-        this.stats.completedParcels || 0,
-      ];
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to load metrics');
+  async loadMetrics() {
+    this.loading = true;
+    this.isLoading = true;
+    this.error = '';
+    
+    try {
+      this.metrics = await this.metricsService.getMetrics();
+      this.stats = this.metrics; // Map metrics to stats for template compatibility
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to load metrics.';
     } finally {
+      this.loading = false;
       this.isLoading = false;
     }
   }

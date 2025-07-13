@@ -1,0 +1,35 @@
+<div class="payments-container">
+  <div class="payments-header">
+    <h1>All Payments</h1>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading payments...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="payments-content" *ngIf="!loading && !error">
+    <div class="payments-grid" *ngIf="payments.length > 0; else noPayments">
+      <div class="payment-card" *ngFor="let payment of payments">
+        <div class="payment-header">
+          <span class="payment-id">#{{ payment.id.slice(0, 8) }}</span>
+          <span class="payment-status" [class]="'status-' + payment.status.toLowerCase()">
+            {{ payment.status }}
+          </span>
+        </div>
+        <div class="payment-details">
+          <p><strong>User:</strong> {{ payment.user?.email || 'N/A' }}</p>
+          <p><strong>Amount:</strong> ${{ payment.amount }}</p>
+          <p><strong>Method:</strong> {{ payment.paymentMethod }}</p>
+          <p><strong>Created:</strong> {{ payment.createdAt | date:'short' }}</p>
+        </div>
+      </div>
+    </div>
+    <ng-template #noPayments>
+      <p class="no-payments">No payments found.</p>
+    </ng-template>
+  </div>
+</div> 

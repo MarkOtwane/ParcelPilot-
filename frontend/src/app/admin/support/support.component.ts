@@ -1,51 +1,61 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { SupportService } from 'src/app/core/services/support.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import { FormsModule } from '@angular/forms';
+import { SupportService } from '../../core/services/support.service';
 
 @Component({
-  selector: 'app-admin-support',
+  selector: 'app-support',
   templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
+  styleUrls: ['./support.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
 })
 export class SupportComponent implements OnInit {
-  isLoading = true;
   tickets: any[] = [];
+  loading = false;
+  isLoading = false;
+  error = '';
   respondingId: string | null = null;
-  responseText: string = '';
+  responseText = '';
 
-  constructor(
-    private supportService: SupportService,
-    private notify: NotificationService
-  ) {}
+  constructor(private supportService: SupportService) {}
 
   async ngOnInit() {
+    await this.loadTickets();
+  }
+
+  async loadTickets() {
+    this.loading = true;
+    this.isLoading = true;
+    this.error = '';
+
     try {
       this.tickets = await this.supportService.getAllTickets();
-    } catch (err: any) {
-      this.notify.error(
-        err?.error?.message || 'Failed to load support tickets.'
-      );
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to load support tickets.';
     } finally {
+      this.loading = false;
       this.isLoading = false;
     }
   }
 
-  startResponding(id: string) {
-    this.respondingId = id;
+  startResponding(ticketId: string) {
+    this.respondingId = ticketId;
     this.responseText = '';
   }
 
   async sendResponse(ticketId: string) {
-    if (!this.responseText.trim()) return;
+    if (!this.responseText.trim()) {
+      return;
+    }
 
     try {
       await this.supportService.respondToTicket(ticketId, this.responseText);
-      const ticket = this.tickets.find((t) => t.id === ticketId);
-      if (ticket) ticket.response = this.responseText;
-      this.notify.success('Response sent!');
       this.respondingId = null;
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to send response.');
+      this.responseText = '';
+      await this.loadTickets(); // Reload to get updated data
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to send response.';
     }
   }
 }

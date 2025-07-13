@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
@@ -16,7 +16,8 @@ export class CloudinaryService {
           folder,
         },
         (error, result) => {
-          if (error) return reject(error);
+          if (error) return reject(new Error(error.message || 'Upload failed'));
+          if (!result) return reject(new Error('Upload failed - no result'));
           resolve(result);
         },
       );

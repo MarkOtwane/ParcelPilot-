@@ -1,0 +1,86 @@
+<div class="my-parcels-container">
+  <div class="my-parcels-header">
+    <h1>My Parcels</h1>
+    <a routerLink="/user/create-parcel" class="btn-primary"
+      >Create New Parcel</a
+    >
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading parcels...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="parcels-content" *ngIf="!loading && !error">
+    <div class="parcels-section">
+      <h2>Sent Parcels</h2>
+      <div
+        class="parcels-grid"
+        *ngIf="parcels.sent?.length > 0; else noSentParcels"
+      >
+        <div class="parcel-card" *ngFor="let parcel of parcels.sent">
+          <div class="parcel-header">
+            <span class="parcel-id">#{{ parcel.id.slice(0, 8) }}</span>
+            <span
+              class="parcel-status"
+              [class]="'status-' + parcel.status.toLowerCase()"
+            >
+              {{ parcel.status }}
+            </span>
+          </div>
+          <div class="parcel-details">
+            <p><strong>From:</strong> {{ parcel.pickupLocation }}</p>
+            <p><strong>To:</strong> {{ parcel.destination }}</p>
+            <p><strong>Weight:</strong> {{ parcel.weight }}kg</p>
+            <p><strong>Cost:</strong> ${{ parcel.cost }}</p>
+            <p>
+              <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noSentParcels>
+        <p class="no-parcels">No sent parcels found.</p>
+      </ng-template>
+    </div>
+
+    <div class="parcels-section">
+      <h2>Received Parcels</h2>
+      <div
+        class="parcels-grid"
+        *ngIf="parcels.received?.length > 0; else noReceivedParcels"
+      >
+        <div class="parcel-card" *ngFor="let parcel of parcels.received">
+          <div class="parcel-header">
+            <span class="parcel-id">#{{ parcel.id.slice(0, 8) }}</span>
+            <span
+              class="parcel-status"
+              [class]="'status-' + parcel.status.toLowerCase()"
+            >
+              {{ parcel.status }}
+            </span>
+          </div>
+          <div class="parcel-details">
+            <p><strong>From:</strong> {{ parcel.pickupLocation }}</p>
+            <p><strong>To:</strong> {{ parcel.destination }}</p>
+            <p><strong>Weight:</strong> {{ parcel.weight }}kg</p>
+            <p><strong>Cost:</strong> ${{ parcel.cost }}</p>
+            <p>
+              <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noReceivedParcels>
+        <p class="no-parcels">No received parcels found.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="my-parcels-footer">
+    <a routerLink="/user">Back to Dashboard</a>
+  </div>
+</div>

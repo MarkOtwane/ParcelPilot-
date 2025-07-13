@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 const API = 'http://localhost:3000/auth'; // Adjust as needed
 
@@ -8,9 +9,16 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   async login(email: string, password: string): Promise<any> {
-    const res = await this.http
-      .post<{ access_token: string }>(`${API}/login`, { email, password })
-      .toPromise();
+    const res = await firstValueFrom(
+      this.http.post<{ access_token: string }>(`${API}/login`, {
+        email,
+        password,
+      })
+    );
+
+    if (!res) {
+      throw new Error('Login failed - no response received');
+    }
 
     const payload = this.decodeJwt(res.access_token);
     localStorage.setItem('access_token', res.access_token);
@@ -39,27 +47,38 @@ export class AuthService {
     phone: string;
     password: string;
   }): Promise<any> {
-    const res = await this.http
-      .post<{ access_token: string }>(`${API}/register`, data)
-      .toPromise();
+    try {
+      const res = await firstValueFrom(
+        this.http.post<{ access_token: string }>(`${API}/register`, data)
+      );
 
-    const payload = this.decodeJwt(res.access_token);
-    localStorage.setItem('access_token', res.access_token);
-    return { ...payload, token: res.access_token };
+      if (!res) {
+        throw new Error('Registration failed - no response received');
+      }
+
+      const payload = this.decodeJwt(res.access_token);
+      localStorage.setItem('access_token', res.access_token);
+      return { ...payload, token: res.access_token };
+    } catch (error: any) {
+      // Re-throw the error so the component can handle it
+      throw error;
+    }
   }
 
   async requestResetPassword(email: string): Promise<void> {
-    await this.http
-      .post('http://localhost:3000/auth/reset-password-request', { email })
-      .toPromise();
+    await firstValueFrom(
+      this.http.post('http://localhost:3000/auth/reset-password-request', {
+        email,
+      })
+    );
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    await this.http
-      .post('http://localhost:3000/auth/update-password', {
+    await firstValueFrom(
+      this.http.post('http://localhost:3000/auth/update-password', {
         token,
         newPassword,
       })
-      .toPromise();
+    );
   }
 }

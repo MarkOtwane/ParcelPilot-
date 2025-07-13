@@ -1,39 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/core/services/user.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
-  selector: 'app-admin-users',
+  selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  styleUrls: ['./users.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class UsersComponent implements OnInit {
-  isLoading = true;
   users: any[] = [];
+  loading = false;
+  error = '';
 
-  constructor(
-    private userService: UserService,
-    private notify: NotificationService
-  ) {}
+  constructor(private userService: UserService) {}
 
   async ngOnInit() {
-    try {
-      this.users = await this.userService.getAllUsers();
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to load users.');
-    } finally {
-      this.isLoading = false;
-    }
+    await this.loadUsers();
   }
 
-  async deactivateUser(id: string) {
+  async loadUsers() {
+    this.loading = true;
+    this.error = '';
+    
     try {
-      await this.userService.deactivateUser(id);
-      this.notify.success('User deactivated');
-      const user = this.users.find((u) => u.id === id);
-      if (user) user.deletedAt = new Date().toISOString();
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to deactivate user.');
+      this.users = await this.userService.getAllUsers();
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to load users.';
+    } finally {
+      this.loading = false;
     }
   }
 }

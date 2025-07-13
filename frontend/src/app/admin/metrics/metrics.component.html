@@ -15,15 +15,6 @@
       <p>KES {{ stats?.totalPayments | number }}</p>
     </div>
   </div>
-
-  <div class="chart-section">
-    <h3>Parcel Status Distribution</h3>
-    <canvas baseChart
-      [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [type]="pieChartType">
-    </canvas>
-  </div>
 </div>
 
 <ng-template #loading>

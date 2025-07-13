@@ -7,8 +7,13 @@
       <p><strong>From:</strong> {{ p.pickupLocation }}</p>
       <p><strong>To:</strong> {{ p.destination }}</p>
       <p><strong>Weight:</strong> {{ p.weight }} kg</p>
-      <p><strong>Status:</strong> 
-        <select [value]="p.status" (change)="updateStatus(p.id, $event.target.value)">
+      <p>
+        <strong>Status:</strong>
+        <select
+          [value]="p.status"
+          #statusSelect
+          (change)="updateStatus(p.id, statusSelect.value)"
+        >
           <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
         </select>
       </p>

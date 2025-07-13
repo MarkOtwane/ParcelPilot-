@@ -1,19 +1,19 @@
 import {
-  Controller,
-  Post,
-  Patch,
-  Get,
   Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../shared/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.gurad';
+import { Roles } from '../shared/decorators/roles.decorator';
 import { InitiatePaymentDto } from './dto/initiate-payment.dto';
 import { UpdatePaymentStatusDto } from './dto/update-payment-status.dto';
+import { PaymentsService } from './payments.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('payments')
@@ -21,18 +21,21 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('initiate')
-  initiate(@Request() req, @Body() dto: InitiatePaymentDto) {
+  initiate(
+    @Request() req: { user: { sub: string } },
+    @Body() dto: InitiatePaymentDto,
+  ) {
     return this.paymentsService.initiate(req.user.sub, dto);
   }
 
   @Get('my')
-  getUserPayments(@Request() req) {
+  getUserPayments(@Request() req: { user: { sub: string } }) {
     return this.paymentsService.getUserPayments(req.user.sub);
   }
 
   @Roles(Role.ADMIN)
   @Get()
-  getAll(@Request() req) {
+  getAll(@Request() req: { user: { sub: string; role: Role } }) {
     return this.paymentsService.getAllPayments(req.user.role);
   }
 

@@ -1,33 +1,40 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MetricsService } from 'src/app/core/services/metrics.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import { RouterModule } from '@angular/router';
+import { MetricsService } from '../../core/services/metrics.service';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-admin-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+  styleUrls: ['./dashboard.component.css'],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
 })
 export class DashboardComponent implements OnInit {
-  isLoading = true;
+  metrics: any = {};
+  stats: any = {};
+  loading = false;
+  isLoading = false;
+  error = '';
 
-  stats = {
-    users: 0,
-    parcels: 0,
-    completedParcels: 0,
-    totalPayments: 0,
-  };
-
-  constructor(
-    private metricsService: MetricsService,
-    private notify: NotificationService
-  ) {}
+  constructor(private metricsService: MetricsService) {}
 
   async ngOnInit() {
+    await this.loadMetrics();
+  }
+
+  async loadMetrics() {
+    this.loading = true;
+    this.isLoading = true;
+    this.error = '';
+
     try {
-      this.stats = await this.metricsService.getDashboardStats();
-    } catch (err: any) {
-      this.notify.error(err?.error?.message || 'Failed to load metrics.');
+      this.metrics = await this.metricsService.getMetrics();
+      this.stats = this.metrics; // Map metrics to stats for template compatibility
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to load metrics.';
     } finally {
+      this.loading = false;
       this.isLoading = false;
     }
   }

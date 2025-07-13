@@ -1,0 +1,127 @@
+<div class="create-parcel-container">
+  <div class="create-parcel-card">
+    <div class="create-parcel-header">
+      <h1>Create New Parcel</h1>
+      <p>Fill in the details below to create a new parcel delivery</p>
+    </div>
+
+    <form [formGroup]="parcelForm" (ngSubmit)="onSubmit()" class="create-parcel-form">
+      <div class="form-group">
+        <label for="receiverId">Receiver ID</label>
+        <input
+          type="text"
+          id="receiverId"
+          formControlName="receiverId"
+          placeholder="Enter receiver ID"
+          class="form-control"
+          [class.error]="
+            parcelForm.get('receiverId')?.invalid && parcelForm.get('receiverId')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('receiverId')?.invalid && parcelForm.get('receiverId')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('receiverId')?.errors?.['required']"
+            >Receiver ID is required</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="pickupLocation">Pickup Location</label>
+        <input
+          type="text"
+          id="pickupLocation"
+          formControlName="pickupLocation"
+          placeholder="Enter pickup location"
+          class="form-control"
+          [class.error]="
+            parcelForm.get('pickupLocation')?.invalid && parcelForm.get('pickupLocation')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('pickupLocation')?.invalid && parcelForm.get('pickupLocation')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('pickupLocation')?.errors?.['required']"
+            >Pickup location is required</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Destination</label>
+        <input
+          type="text"
+          id="destination"
+          formControlName="destination"
+          placeholder="Enter destination"
+          class="form-control"
+          [class.error]="
+            parcelForm.get('destination')?.invalid && parcelForm.get('destination')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('destination')?.invalid && parcelForm.get('destination')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('destination')?.errors?.['required']"
+            >Destination is required</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Weight (kg)</label>
+        <input
+          type="number"
+          id="weight"
+          formControlName="weight"
+          placeholder="Enter weight in kg"
+          class="form-control"
+          step="0.1"
+          [class.error]="
+            parcelForm.get('weight')?.invalid && parcelForm.get('weight')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('weight')?.invalid && parcelForm.get('weight')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('weight')?.errors?.['required']"
+            >Weight is required</span
+          >
+          <span *ngIf="parcelForm.get('weight')?.errors?.['min']"
+            >Weight must be at least 0.1 kg</span
+          >
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <div class="success-message" *ngIf="success">
+        {{ success }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="parcelForm.invalid || loading"
+      >
+        <span *ngIf="loading">Creating...</span>
+        <span *ngIf="!loading">Create Parcel</span>
+      </button>
+    </form>
+  </div>
+</div> 
