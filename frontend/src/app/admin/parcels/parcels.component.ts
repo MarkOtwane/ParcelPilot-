@@ -18,9 +18,17 @@ export class ParcelsComponent implements OnInit {
   error = '';
   successMessage = '';
   selectedParcel: any = null;
+  isEditing = false;
   statusOptions = ['PENDING', 'IN_TRANSIT', 'DELIVERED', 'FAILED'];
   statusFilter = '';
   searchTerm = '';
+  editForm = {
+    pickupLocation: '',
+    destination: '',
+    weight: 0,
+    status: '',
+    cost: 0,
+  };
 
   constructor(private parcelService: ParcelService) {}
 
@@ -31,14 +39,11 @@ export class ParcelsComponent implements OnInit {
   async loadParcels() {
     this.loading = true;
     this.isLoading = true;
-    this.error = '';
     this.successMessage = '';
 
     try {
       this.parcels = await this.parcelService.getAllParcels();
       this.applyFilters();
-    } catch (error: any) {
-      this.error = error.error?.message || 'Failed to load parcels.';
     } finally {
       this.loading = false;
       this.isLoading = false;
@@ -46,23 +51,41 @@ export class ParcelsComponent implements OnInit {
   }
 
   applyFilters() {
-    this.filteredParcels = this.parcels.filter(parcel => {
-      const matchesStatus = !this.statusFilter || parcel.status === this.statusFilter;
-      const matchesSearch = !this.searchTerm || 
+    this.filteredParcels = this.parcels.filter((parcel) => {
+      const matchesStatus =
+        !this.statusFilter || parcel.status === this.statusFilter;
+      const matchesSearch =
+        !this.searchTerm ||
         parcel.id.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        parcel.pickupLocation.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        parcel.destination.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (parcel.sender?.name && parcel.sender.name.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
-        (parcel.sender?.email && parcel.sender.email.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
-        (parcel.receiver?.name && parcel.receiver.name.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
-        (parcel.receiver?.email && parcel.receiver.email.toLowerCase().includes(this.searchTerm.toLowerCase()));
-      
+        parcel.pickupLocation
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
+        parcel.destination
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
+        (parcel.sender?.name &&
+          parcel.sender.name
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())) ||
+        (parcel.sender?.email &&
+          parcel.sender.email
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())) ||
+        (parcel.receiver?.name &&
+          parcel.receiver.name
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())) ||
+        (parcel.receiver?.email &&
+          parcel.receiver.email
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()));
+
       return matchesStatus && matchesSearch;
     });
   }
 
   getParcelsByStatus(status: string): any[] {
-    return this.parcels.filter(p => p.status === status);
+    return this.parcels.filter((p) => p.status === status);
   }
 
   async updateStatus(parcelId: string, status: string) {
@@ -70,38 +93,79 @@ export class ParcelsComponent implements OnInit {
       await this.parcelService.updateStatus(parcelId, status);
       this.successMessage = `Parcel status updated to ${status} successfully.`;
       await this.loadParcels(); // Reload to get updated data
-      setTimeout(() => this.successMessage = '', 3000);
-    } catch (error: any) {
-      this.error = error.error?.message || 'Failed to update parcel status.';
-      setTimeout(() => this.error = '', 5000);
-    }
+      setTimeout(() => (this.successMessage = ''), 3000);
+    } catch {}
   }
 
   viewParcelDetails(parcel: any) {
     this.selectedParcel = parcel;
+    this.isEditing = false;
+  }
+
+  editParcel(parcel: any) {
+    this.selectedParcel = parcel;
+    this.editForm = {
+      pickupLocation: parcel.pickupLocation || '',
+      destination: parcel.destination || '',
+      weight: parcel.weight || 0,
+      status: parcel.status || 'PENDING',
+      cost: parcel.cost || 0,
+    };
+    this.isEditing = true;
+  }
+
+  async saveParcel() {
+    if (!this.selectedParcel) return;
+
+    try {
+      await this.parcelService.updateParcel(
+        this.selectedParcel.id,
+        this.editForm
+      );
+      this.successMessage = 'Parcel updated successfully.';
+      this.isEditing = false;
+      this.selectedParcel = null;
+      await this.loadParcels(); // Reload the list
+      setTimeout(() => (this.successMessage = ''), 3000);
+    } catch {}
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+    this.selectedParcel = null;
+    this.editForm = {
+      pickupLocation: '',
+      destination: '',
+      weight: 0,
+      status: '',
+      cost: 0,
+    };
   }
 
   closeModal() {
     this.selectedParcel = null;
-  }
-
-  editParcel(parcel: any) {
-    // Navigate to edit page or open edit modal
-    console.log('Edit parcel:', parcel);
-    alert(`Edit functionality for parcel ${parcel.id} would be implemented here.`);
+    this.isEditing = false;
+    this.editForm = {
+      pickupLocation: '',
+      destination: '',
+      weight: 0,
+      status: '',
+      cost: 0,
+    };
   }
 
   async deleteParcel(parcelId: string) {
-    if (confirm('Are you sure you want to delete this parcel? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this parcel? This action cannot be undone.'
+      )
+    ) {
       try {
         await this.parcelService.deleteParcel(parcelId);
         this.successMessage = 'Parcel deleted successfully.';
         await this.loadParcels(); // Reload the list
-        setTimeout(() => this.successMessage = '', 3000);
-      } catch (error: any) {
-        this.error = error.error?.message || 'Failed to delete parcel.';
-        setTimeout(() => this.error = '', 5000);
-      }
+        setTimeout(() => (this.successMessage = ''), 3000);
+      } catch {}
     }
   }
 
@@ -122,8 +186,18 @@ export class ParcelsComponent implements OnInit {
   }
 
   private generateCSV(): string {
-    const headers = ['ID', 'Status', 'Pickup Location', 'Destination', 'Weight', 'Cost', 'Sender', 'Receiver', 'Created'];
-    const rows = this.filteredParcels.map(p => [
+    const headers = [
+      'ID',
+      'Status',
+      'Pickup Location',
+      'Destination',
+      'Weight',
+      'Cost',
+      'Sender',
+      'Receiver',
+      'Created',
+    ];
+    const rows = this.filteredParcels.map((p) => [
       p.id,
       p.status,
       p.pickupLocation,
@@ -132,9 +206,9 @@ export class ParcelsComponent implements OnInit {
       p.cost,
       p.sender?.name || p.sender?.email || 'N/A',
       p.receiver?.name || p.receiver?.email || 'N/A',
-      new Date(p.createdAt).toLocaleDateString()
+      new Date(p.createdAt).toLocaleDateString(),
     ]);
-    
-    return [headers, ...rows].map(row => row.join(',')).join('\n');
+
+    return [headers, ...rows].map((row) => row.join(',')).join('\n');
   }
 }

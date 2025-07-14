@@ -37,6 +37,11 @@ export class ParcelsService {
         destination: dto.destination,
         weight: dto.weight,
         cost,
+        description: dto.description,
+        pickupLat: dto.pickupLat,
+        pickupLng: dto.pickupLng,
+        destinationLat: dto.destinationLat,
+        destinationLng: dto.destinationLng,
       },
     });
 
@@ -185,6 +190,143 @@ export class ParcelsService {
     }
 
     return updated;
+  }
+
+  async getParcelById(id: string, role: Role) {
+    if (role !== 'ADMIN') {
+      throw new ForbiddenException('Only admins can view parcel details');
+    }
+
+    const parcel = await this.prisma.parcel.findUnique({
+      where: { id, deletedAt: null },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Parcel not found');
+    }
+
+    return parcel;
+  }
+
+  async updateParcel(id: string, dto: any, role: Role) {
+    if (role !== 'ADMIN') {
+      throw new ForbiddenException('Only admins can update parcels');
+    }
+
+    const parcel = await this.prisma.parcel.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Parcel not found');
+    }
+
+    // Update the parcel with the provided data
+    const updated = await this.prisma.parcel.update({
+      where: { id },
+      data: {
+        pickupLocation: dto.pickupLocation,
+        destination: dto.destination,
+        weight: dto.weight,
+        status: dto.status,
+        cost: dto.cost ? this.calculateCost(dto.cost) : undefined,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    return updated;
+  }
+
+  async updateUserParcel(userId: string, parcelId: string, dto: any) {
+    const parcel = await this.prisma.parcel.findUnique({
+      where: { id: parcelId },
+    });
+    if (!parcel) throw new NotFoundException('Parcel not found');
+    if (parcel.senderId !== userId) throw new ForbiddenException('Not allowed');
+
+    // Only allow updating certain fields
+    const updated = await this.prisma.parcel.update({
+      where: { id: parcelId },
+      data: {
+        pickupLocation: dto.pickupLocation,
+        destination: dto.destination,
+        weight: dto.weight,
+        // Do not allow user to update status or cost directly
+      },
+    });
+    return updated;
+  }
+
+  async deleteParcel(id: string, role: Role) {
+    if (role !== 'ADMIN') {
+      throw new ForbiddenException('Only admins can delete parcels');
+    }
+
+    const parcel = await this.prisma.parcel.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!parcel) {
+      throw new NotFoundException('Parcel not found');
+    }
+
+    // Soft delete by setting deletedAt timestamp
+    const deleted = await this.prisma.parcel.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return { message: 'Parcel deleted successfully', parcel: deleted };
+  }
+
+  async deleteUserParcel(userId: string, parcelId: string) {
+    const parcel = await this.prisma.parcel.findUnique({
+      where: { id: parcelId },
+    });
+    if (!parcel) throw new NotFoundException('Parcel not found');
+    if (parcel.senderId !== userId) throw new ForbiddenException('Not allowed');
+
+    // Soft delete by setting deletedAt timestamp
+    const deleted = await this.prisma.parcel.update({
+      where: { id: parcelId },
+      data: { deletedAt: new Date() },
+    });
+    return { message: 'Parcel deleted successfully', parcel: deleted };
   }
 
   private calculateCost(weight: number): number {

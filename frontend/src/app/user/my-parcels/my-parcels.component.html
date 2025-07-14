@@ -44,16 +44,16 @@
             <button class="btn-secondary" (click)="viewParcelDetails(parcel)">
               View Details
             </button>
-            <button 
-              class="btn-warning" 
+            <button
+              class="btn-warning"
               (click)="editParcel(parcel)"
               [disabled]="parcel.status !== 'PENDING'"
               title="Can only edit pending parcels"
             >
               Edit
             </button>
-            <button 
-              class="btn-danger" 
+            <button
+              class="btn-danger"
               (click)="deleteParcel(parcel.id)"
               [disabled]="parcel.status !== 'PENDING'"
               title="Can only delete pending parcels"
@@ -118,7 +118,7 @@
           <strong>Parcel ID:</strong> {{ selectedParcel.id }}
         </div>
         <div class="detail-row">
-          <strong>Status:</strong> 
+          <strong>Status:</strong>
           <span [class]="'status-' + selectedParcel.status.toLowerCase()">
             {{ selectedParcel.status }}
           </span>
@@ -136,12 +136,72 @@
           <strong>Cost:</strong> ${{ selectedParcel.cost }}
         </div>
         <div class="detail-row">
-          <strong>Created:</strong> {{ selectedParcel.createdAt | date : "full" }}
+          <strong>Created:</strong>
+          {{ selectedParcel.createdAt | date : "full" }}
         </div>
         <div class="detail-row" *ngIf="selectedParcel.updatedAt">
-          <strong>Last Updated:</strong> {{ selectedParcel.updatedAt | date : "full" }}
+          <strong>Last Updated:</strong>
+          {{ selectedParcel.updatedAt | date : "full" }}
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Edit Parcel Modal -->
+  <div class="modal-overlay" *ngIf="isEditing">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Edit Parcel</h3>
+        <button class="close-btn" (click)="cancelEdit()">&times;</button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="saveParcel()">
+        <div class="form-group">
+          <label for="pickupLocation">Pickup Location</label>
+          <input
+            id="pickupLocation"
+            formControlName="pickupLocation"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label for="destination">Destination</label>
+          <input
+            id="destination"
+            formControlName="destination"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label for="weight">Weight (kg)</label>
+          <input
+            id="weight"
+            type="number"
+            formControlName="weight"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="modal-actions">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="editForm.invalid"
+          >
+            Save
+          </button>
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

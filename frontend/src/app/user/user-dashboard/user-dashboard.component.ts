@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -15,11 +16,17 @@ export class UserDashboardComponent {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) {
-    const token = this.authService.getToken();
-    if (token) {
-      this.user = this.authService.decodeJwt(token);
+    this.loadUser();
+  }
+
+  async loadUser() {
+    try {
+      this.user = await this.userService.getMyProfile();
+    } catch {
+      this.user = { name: 'User' };
     }
   }
 

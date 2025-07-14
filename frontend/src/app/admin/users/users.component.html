@@ -3,39 +3,74 @@
     <h1>All Users</h1>
   </div>
 
-  <div class="loading" *ngIf="loading">
-    <p>Loading users...</p>
+  <!-- Success and error messages -->
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading">Loading users...</div>
+
+  <!-- Users Table -->
+  <table *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Role</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.createdAt | date:'short' }}</td>
+        <td>
+          <button (click)="viewUserDetails(user)">View</button>
+          <button (click)="editUser(user)">Edit</button>
+          <button (click)="deleteUser(user.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Edit User Modal -->
+  <div *ngIf="isEditing" class="modal">
+    <div class="modal-content">
+      <h3>Edit User</h3>
+      <form (ngSubmit)="saveUser()">
+        <label>Name:
+          <input [(ngModel)]="editForm.name" name="name" required />
+        </label>
+        <label>Phone:
+          <input [(ngModel)]="editForm.phone" name="phone" required />
+        </label>
+        <div class="modal-actions">
+          <button type="submit">Save</button>
+          <button type="button" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div class="error-message" *ngIf="error">
-    {{ error }}
-  </div>
-
-  <div class="users-content" *ngIf="!loading && !error">
-    <div class="users-grid" *ngIf="users.length > 0; else noUsers">
-      <div class="user-card" *ngFor="let user of users">
-        <div class="user-header">
-          <span class="user-id">#{{ user.id.slice(0, 8) }}</span>
-          <span class="user-role" [class]="'role-' + user.role.toLowerCase()">
-            {{ user.role }}
-          </span>
-        </div>
-        <div class="user-details">
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Name:</strong> {{ user.name || "N/A" }}</p>
-          <p><strong>Phone:</strong> {{ user.phone || "N/A" }}</p>
-          <p><strong>Created:</strong> {{ user.createdAt | date : "short" }}</p>
-        </div>
-        <div class="user-actions">
-          <button class="btn-edit" (click)="editUser(user)">Edit</button>
-          <button class="btn-delete" (click)="deleteUser(user.id)">
-            Delete
-          </button>
-        </div>
+  <!-- View User Details Modal -->
+  <div *ngIf="selectedUser && !isEditing" class="modal">
+    <div class="modal-content">
+      <h3>User Details</h3>
+      <p><strong>ID:</strong> {{ selectedUser.id }}</p>
+      <p><strong>Name:</strong> {{ selectedUser.name }}</p>
+      <p><strong>Email:</strong> {{ selectedUser.email }}</p>
+      <p><strong>Phone:</strong> {{ selectedUser.phone }}</p>
+      <p><strong>Role:</strong> {{ selectedUser.role }}</p>
+      <p><strong>Created:</strong> {{ selectedUser.createdAt | date:'short' }}</p>
+      <div class="modal-actions">
+        <button (click)="closeModal()">Close</button>
       </div>
     </div>
-    <ng-template #noUsers>
-      <p class="no-users">No users found.</p>
-    </ng-template>
   </div>
 </div>

@@ -43,4 +43,25 @@ export class UserService {
     );
     return response.data;
   }
+
+  async getUserById(id: string): Promise<any> {
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<any>>(`${API}/${id}`)
+    );
+    return response.data;
+  }
+
+  async updateUser(id: string, data: any): Promise<any> {
+    const response = await firstValueFrom(
+      this.http.patch<ApiResponse<any>>(`${API}/${id}`, data)
+    );
+    return response.data;
+  }
+
+  async deleteUser(id: string): Promise<any> {
+    const response = await firstValueFrom(
+      this.http.delete<ApiResponse<any>>(`${API}/${id}`)
+    );
+    return response.data;
+  }
 }

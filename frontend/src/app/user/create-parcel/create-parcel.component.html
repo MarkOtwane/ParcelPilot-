@@ -40,12 +40,12 @@
       </div>
 
       <div class="form-group">
-        <label for="pickupLocation">Pickup Location</label>
+        <label for="pickupLocation">Pickup Location Name</label>
         <input
           type="text"
           id="pickupLocation"
           formControlName="pickupLocation"
-          placeholder="Enter pickup location"
+          placeholder="Enter pickup location name"
           class="form-control"
           [class.error]="
             parcelForm.get('pickupLocation')?.invalid &&
@@ -60,18 +60,38 @@
           "
         >
           <span *ngIf="parcelForm.get('pickupLocation')?.errors?.['required']"
-            >Pickup location is required</span
+            >Pickup location name is required</span
           >
         </div>
       </div>
 
       <div class="form-group">
-        <label for="destination">Destination</label>
+        <label>Pickup Location (select on map for direction only)</label>
+        <google-map
+          height="300px"
+          width="100%"
+          [center]="pickupCenter"
+          [zoom]="mapZoom"
+          (mapClick)="setPickupLocation($event)"
+        >
+          <map-marker
+            *ngIf="parcelForm.value.pickupLat && parcelForm.value.pickupLng"
+            [position]="{
+              lat: parcelForm.value.pickupLat,
+              lng: parcelForm.value.pickupLng
+            }"
+          >
+          </map-marker>
+        </google-map>
+      </div>
+
+      <div class="form-group">
+        <label for="destination">Destination Name</label>
         <input
           type="text"
           id="destination"
           formControlName="destination"
-          placeholder="Enter destination"
+          placeholder="Enter destination name"
           class="form-control"
           [class.error]="
             parcelForm.get('destination')?.invalid &&
@@ -86,9 +106,31 @@
           "
         >
           <span *ngIf="parcelForm.get('destination')?.errors?.['required']"
-            >Destination is required</span
+            >Destination name is required</span
           >
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>Destination Location (select on map for direction only)</label>
+        <google-map
+          height="300px"
+          width="100%"
+          [center]="destinationCenter"
+          [zoom]="mapZoom"
+          (mapClick)="setDestinationLocation($event)"
+        >
+          <map-marker
+            *ngIf="
+              parcelForm.value.destinationLat && parcelForm.value.destinationLng
+            "
+            [position]="{
+              lat: parcelForm.value.destinationLat,
+              lng: parcelForm.value.destinationLng
+            }"
+          >
+          </map-marker>
+        </google-map>
       </div>
 
       <div class="form-group">
@@ -117,6 +159,35 @@
           >
           <span *ngIf="parcelForm.get('weight')?.errors?.['min']"
             >Weight must be at least 0.1 kg</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Enter a detailed description of the parcel"
+          class="form-control"
+          rows="3"
+          [class.error]="
+            parcelForm.get('description')?.invalid &&
+            parcelForm.get('description')?.touched
+          "
+        ></textarea>
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('description')?.invalid &&
+            parcelForm.get('description')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('description')?.errors?.['required']"
+            >Description is required</span
+          >
+          <span *ngIf="parcelForm.get('description')?.errors?.['minlength']"
+            >Description must be at least 5 characters</span
           >
         </div>
       </div>

@@ -87,4 +87,96 @@ export class UsersService {
       },
     });
   }
+
+  async getUserById(id: string, role: Role) {
+    if (role !== Role.ADMIN) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
+  async updateUser(id: string, dto: UpdateUserDto, role: Role) {
+    if (role !== Role.ADMIN) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        phone: dto.phone,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return updated;
+  }
+
+  async deleteUser(id: string, role: Role) {
+    if (role !== Role.ADMIN) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id, deletedAt: null },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Prevent admin from deleting themselves
+    if (user.role === Role.ADMIN) {
+      throw new ForbiddenException('Cannot delete admin users');
+    }
+
+    // Soft delete by setting deletedAt timestamp
+    const deleted = await this.prisma.user.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        deletedAt: true,
+      },
+    });
+
+    return { message: 'User deleted successfully', user: deleted };
+  }
 }

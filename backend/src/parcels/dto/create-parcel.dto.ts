@@ -15,4 +15,16 @@ export class CreateParcelDto {
 
   @IsNumber()
   weight: number;
+
+  @IsString()
+  description?: string;
+
+  @IsNumber()
+  pickupLat?: number;
+  @IsNumber()
+  pickupLng?: number;
+  @IsNumber()
+  destinationLat?: number;
+  @IsNumber()
+  destinationLng?: number;
 }

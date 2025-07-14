@@ -39,7 +39,12 @@ model Parcel {
   receiver User     @relation("ReceiverParcels", fields: [receiverId], references: [id])
   payment  Payment?
 
-  imageUrl String?
+  imageUrl       String?
+  description    String?
+  pickupLat      Float?
+  pickupLng      Float?
+  destinationLat Float?
+  destinationLng Float?
 }
 
 model Payment {
@@ -70,7 +75,6 @@ model AuditLog {
   action    String
   timestamp DateTime @default(now())
 }
-
 
 enum Role {
   USER

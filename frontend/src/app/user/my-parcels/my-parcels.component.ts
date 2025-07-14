@@ -2,21 +2,31 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ParcelService } from '../../core/services/parcel.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-my-parcels',
   templateUrl: './my-parcels.component.html',
   styleUrls: ['./my-parcels.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, ReactiveFormsModule]
 })
 export class MyParcelsComponent implements OnInit {
   parcels: any = { sent: [], received: [] };
   loading = false;
   error = '';
   selectedParcel: any = null;
+  isEditing = false;
+  editForm: FormGroup;
 
-  constructor(private parcelService: ParcelService) {}
+  constructor(private parcelService: ParcelService, private fb: FormBuilder) {
+    this.editForm = this.fb.group({
+      pickupLocation: ['', [Validators.required]],
+      destination: ['', [Validators.required]],
+      weight: ['', [Validators.required, Validators.min(0.1)]],
+      description: ['', [Validators.required, Validators.minLength(5)]],
+    });
+  }
 
   async ngOnInit() {
     await this.loadParcels();
@@ -39,16 +49,40 @@ export class MyParcelsComponent implements OnInit {
     this.selectedParcel = parcel;
   }
 
-  closeModal() {
-    this.selectedParcel = null;
+  editParcel(parcel: any) {
+    if (parcel.status !== 'PENDING') return;
+    this.selectedParcel = parcel;
+    this.isEditing = true;
+    this.editForm.setValue({
+      pickupLocation: parcel.pickupLocation || '',
+      destination: parcel.destination || '',
+      weight: parcel.weight || 0,
+      description: parcel.description || '',
+    });
   }
 
-  editParcel(parcel: any) {
-    // Navigate to edit page with parcel data
-    // You can implement this as a separate route or modal
-    console.log('Edit parcel:', parcel);
-    // For now, we'll just show an alert
-    alert(`Edit functionality for parcel ${parcel.id} would be implemented here.`);
+  async saveParcel() {
+    if (!this.selectedParcel || this.editForm.invalid) return;
+    try {
+      await this.parcelService.updateMyParcel(this.selectedParcel.id, this.editForm.value);
+      this.isEditing = false;
+      this.selectedParcel = null;
+      await this.loadParcels();
+    } catch (error: any) {
+      this.error = error.error?.message || 'Failed to update parcel.';
+    }
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+    this.selectedParcel = null;
+    this.editForm.reset();
+  }
+
+  closeModal() {
+    this.selectedParcel = null;
+    this.isEditing = false;
+    this.editForm.reset();
   }
 
   async deleteParcel(parcelId: string) {

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Request,
   UseGuards,
@@ -50,5 +51,33 @@ export class UsersController {
   @Get()
   getAll(@Request() req: { user: { sub: string; role: Role } }) {
     return this.usersService.getAllUsers(req.user.role);
+  }
+
+  @Roles(Role.ADMIN)
+  @Get(':id')
+  getUserById(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+  ) {
+    return this.usersService.getUserById(id, req.user.role);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch(':id')
+  updateUser(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+  ) {
+    return this.usersService.updateUser(id, dto, req.user.role);
+  }
+
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  deleteUser(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+  ) {
+    return this.usersService.deleteUser(id, req.user.role);
   }
 }

@@ -16,9 +16,74 @@
     </div>
     <div class="card total">
       <h3>Total Payments</h3>
-      <p>KES {{ stats.totalPayments | number:'1.0-0' }}</p>
+      <p>KES {{ stats.totalPayments | number : "1.0-0" }}</p>
     </div>
   </div>
+
+  <div class="parcel-management" *ngIf="!parcelsLoading && parcels.length">
+    <h3>Parcel Management</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Status</th>
+          <th>Pickup</th>
+          <th>Destination</th>
+          <th>Weight</th>
+          <th>Cost</th>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let parcel of parcels; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ parcel.status }}</td>
+          <td>{{ parcel.pickupLocation }}</td>
+          <td>{{ parcel.destination }}</td>
+          <td>{{ parcel.weight }}</td>
+          <td>{{ parcel.cost }}</td>
+          <td>{{ parcel.sender?.name || parcel.sender?.email || "N/A" }}</td>
+          <td>
+            {{ parcel.receiver?.name || parcel.receiver?.email || "N/A" }}
+          </td>
+          <td>{{ parcel.createdAt | date : "short" }}</td>
+          <td>
+            <select
+              [value]="parcel.status"
+              #statusSelect
+              (change)="updateStatus(parcel.id, statusSelect.value)"
+            >
+              <option *ngFor="let s of statusOptions" [value]="s">
+                {{ s }}
+              </option>
+            </select>
+            <button
+              *ngIf="parcel.status === 'PENDING'"
+              class="btn-success"
+              (click)="approveParcel(parcel.id)"
+            >
+              Approve
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="parcels.length">
+        <tr>
+          <td colspan="4" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td style="font-weight: bold">{{ totalWeight }}</td>
+          <td style="font-weight: bold">{{ totalCost }}</td>
+          <td colspan="4"></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div *ngIf="parcelError" class="error-message">{{ parcelError }}</div>
+  </div>
+  <div *ngIf="parcelsLoading">Loading parcels...</div>
 </div>
 
 <ng-template #loading>

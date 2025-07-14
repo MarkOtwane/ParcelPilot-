@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Patch,
   Post,
   Request,
@@ -43,11 +45,56 @@ export class ParcelsController {
   }
 
   @Roles(Role.ADMIN)
+  @Get(':id')
+  getParcelById(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+  ) {
+    return this.parcelsService.getParcelById(id, req.user.role);
+  }
+
+  @Roles(Role.ADMIN)
   @Patch('update-status')
   updateStatus(
     @Request() req: { user: { sub: string; role: Role } },
     @Body() dto: UpdateParcelStatusDto,
   ) {
     return this.parcelsService.updateStatus(req.user.sub, dto, req.user.role);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch(':id')
+  updateParcel(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+    @Body() dto: any,
+  ) {
+    return this.parcelsService.updateParcel(id, dto, req.user.role);
+  }
+
+  @Patch('my/:id')
+  updateMyParcel(
+    @Request() req: { user: { sub: string } },
+    @Param('id') id: string,
+    @Body() dto: any,
+  ) {
+    return this.parcelsService.updateUserParcel(req.user.sub, id, dto);
+  }
+
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  deleteParcel(
+    @Request() req: { user: { sub: string; role: Role } },
+    @Param('id') id: string,
+  ) {
+    return this.parcelsService.deleteParcel(id, req.user.role);
+  }
+
+  @Delete('my/:id')
+  deleteMyParcel(
+    @Request() req: { user: { sub: string } },
+    @Param('id') id: string,
+  ) {
+    return this.parcelsService.deleteUserParcel(req.user.sub, id);
   }
 }

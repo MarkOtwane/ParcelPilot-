@@ -11,12 +11,107 @@
     </div>
   </div>
 
-  <div class="error-message" *ngIf="error">
-    {{ error }}
+  <!-- Success and error messages -->
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading || isLoading">Loading parcels...</div>
+
+  <!-- Parcels Table -->
+  <table *ngIf="!loading && !isLoading">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Pickup Location</th>
+        <th>Destination</th>
+        <th>Weight</th>
+        <th>Cost</th>
+        <th>Sender</th>
+        <th>Receiver</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let parcel of filteredParcels">
+        <td>{{ parcel.id }}</td>
+        <td>{{ parcel.status }}</td>
+        <td>{{ parcel.pickupLocation }}</td>
+        <td>{{ parcel.destination }}</td>
+        <td>{{ parcel.weight }}</td>
+        <td>{{ parcel.cost }}</td>
+        <td>{{ parcel.sender?.name || parcel.sender?.email || 'N/A' }}</td>
+        <td>{{ parcel.receiver?.name || parcel.receiver?.email || 'N/A' }}</td>
+        <td>{{ parcel.createdAt | date:'short' }}</td>
+        <td>
+          <select
+            [value]="parcel.status"
+            #statusSelect
+            (change)="updateStatus(parcel.id, statusSelect.value)"
+          >
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+          </select>
+          <button
+            *ngIf="parcel.status === 'PENDING'"
+            class="btn-success"
+            (click)="updateStatus(parcel.id, 'IN_TRANSIT')"
+          >
+            Approve
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Edit Parcel Modal -->
+  <div *ngIf="isEditing" class="modal">
+    <div class="modal-content">
+      <h3>Edit Parcel</h3>
+      <form (ngSubmit)="saveParcel()">
+        <label>Pickup Location:
+          <input [(ngModel)]="editForm.pickupLocation" name="pickupLocation" required />
+        </label>
+        <label>Destination:
+          <input [(ngModel)]="editForm.destination" name="destination" required />
+        </label>
+        <label>Weight:
+          <input type="number" [(ngModel)]="editForm.weight" name="weight" required />
+        </label>
+        <label>Status:
+          <select [(ngModel)]="editForm.status" name="status" required>
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+          </select>
+        </label>
+        <label>Cost:
+          <input type="number" [(ngModel)]="editForm.cost" name="cost" required />
+        </label>
+        <div class="modal-actions">
+          <button type="submit">Save</button>
+          <button type="button" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
+  <!-- View Parcel Details Modal -->
+  <div *ngIf="selectedParcel && !isEditing" class="modal">
+    <div class="modal-content">
+      <h3>Parcel Details</h3>
+      <p><strong>ID:</strong> {{ selectedParcel.id }}</p>
+      <p><strong>Status:</strong> {{ selectedParcel.status }}</p>
+      <p><strong>Pickup Location:</strong> {{ selectedParcel.pickupLocation }}</p>
+      <p><strong>Destination:</strong> {{ selectedParcel.destination }}</p>
+      <p><strong>Weight:</strong> {{ selectedParcel.weight }}</p>
+      <p><strong>Cost:</strong> {{ selectedParcel.cost }}</p>
+      <p><strong>Sender:</strong> {{ selectedParcel.sender?.name || selectedParcel.sender?.email || 'N/A' }}</p>
+      <p><strong>Receiver:</strong> {{ selectedParcel.receiver?.name || selectedParcel.receiver?.email || 'N/A' }}</p>
+      <p><strong>Created:</strong> {{ selectedParcel.createdAt | date:'short' }}</p>
+      <div class="modal-actions">
+        <button (click)="closeModal()">Close</button>
+      </div>
+    </div>
   </div>
 
   <div class="filters-section">

@@ -46,4 +46,11 @@ export class ParcelService {
     const response = await firstValueFrom(this.http.patch<ApiResponse<any>>(`${API}/parcels/${parcelId}`, data));
     return response.data;
   }
+
+  async updateMyParcel(parcelId: string, data: any): Promise<any> {
+    const response = await firstValueFrom(
+      this.http.patch<ApiResponse<any>>(`${API}/parcels/my/${parcelId}`, data)
+    );
+    return response.data;
+  }
 }
