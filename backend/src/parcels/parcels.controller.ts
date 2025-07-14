@@ -30,7 +30,16 @@ export class ParcelsController {
 
   @Get('my')
   listParcels(@Request() req: { user: { sub: string } }) {
+    console.log('=== PARCELS CONTROLLER - LIST PARCELS ===');
+    console.log('Request user:', req.user);
+    console.log('User sub:', req.user.sub);
     return this.parcelsService.listUserParcels(req.user.sub);
+  }
+
+  @Roles(Role.ADMIN)
+  @Get()
+  getAllParcels(@Request() req: { user: { sub: string; role: Role } }) {
+    return this.parcelsService.getAllParcels(req.user.role);
   }
 
   @Roles(Role.ADMIN)

@@ -1,24 +1,146 @@
-.admin-users {
+.users-container {
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.admin-users h2 {
-    margin-bottom: 20px;
+.users-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.users-header h1 {
     color: #333;
+    margin: 0;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.users-content {
+    display: grid;
+    gap: 20px;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
 .user-card {
     background: white;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-id {
+    font-weight: bold;
+    color: #2196f3;
+    font-size: 14px;
+}
+
+.user-role {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.role-admin {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.role-user {
+    background-color: #e8f5e8;
+    color: #388e3c;
+}
+
+.user-details {
     margin-bottom: 15px;
 }
 
-.user-card p {
+.user-details p {
     margin: 5px 0;
+    color: #555;
 }
 
-.user-card strong {
-    color: #555;
+.user-details strong {
+    color: #333;
+    min-width: 80px;
+    display: inline-block;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-edit {
+    background-color: #2196f3;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #1976d2;
+}
+
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+.no-users {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+    grid-column: 1 / -1;
 }

@@ -1,10 +1,10 @@
-.admin-dashboard {
+.dashboard {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.admin-dashboard h2 {
+.dashboard h2 {
   color: #333;
   margin-bottom: 30px;
   text-align: center;
@@ -47,7 +47,7 @@
 }
 
 .card.total {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
+  background: linear-gradient(135deg, #2196f3, #1976d2);
   color: white;
 }
 
@@ -58,4 +58,4 @@
 
 .card.total p {
   font-size: 28px;
-}
+} 

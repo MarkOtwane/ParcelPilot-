@@ -43,45 +43,89 @@ export class ParcelsService {
     // Send email notification (non-blocking)
     this.mailer
       .sendParcelCreatedEmail(sender.email, receiver.email, parcel)
-      .catch((error) => {
-        console.error('Failed to send parcel created email:', error.message);
+      .catch((error: unknown) => {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send parcel created email:', errorMessage);
       });
 
     // Send SMS notifications (non-blocking)
     if (sender.phone) {
-      this.mailer
-        .sendSms(
+      try {
+        this.mailer.sendSms(
           sender.phone,
           `Your parcel has been created. Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}, Cost: KES ${parcel.cost}`,
-        )
-        .catch((error) => {
-          console.error('Failed to send SMS to sender:', error.message);
-        });
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send SMS to sender:', errorMessage);
+      }
     }
     if (receiver.phone) {
-      this.mailer
-        .sendSms(
+      try {
+        this.mailer.sendSms(
           receiver.phone,
           `A parcel is on its way to you! Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}`,
-        )
-        .catch((error) => {
-          console.error('Failed to send SMS to receiver:', error.message);
-        });
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send SMS to receiver:', errorMessage);
+      }
     }
 
     return parcel;
   }
 
   async listUserParcels(userId: string) {
+    console.log('=== LIST USER PARCELS ===');
+    console.log('User ID:', userId);
+
     const sent = await this.prisma.parcel.findMany({
       where: { senderId: userId, deletedAt: null },
     });
+    console.log('Sent parcels found:', sent.length);
+    console.log('Sent parcels:', sent);
 
     const received = await this.prisma.parcel.findMany({
       where: { receiverId: userId, deletedAt: null },
     });
+    console.log('Received parcels found:', received.length);
+    console.log('Received parcels:', received);
 
-    return { sent, received };
+    const result = { sent, received };
+    console.log('Returning result:', result);
+    return result;
+  }
+
+  async getAllParcels(role: Role) {
+    if (role !== 'ADMIN') {
+      throw new ForbiddenException('Only admins can view all parcels');
+    }
+
+    return this.prisma.parcel.findMany({
+      where: { deletedAt: null },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async updateStatus(adminId: string, dto: UpdateParcelStatusDto, role: Role) {
@@ -108,27 +152,36 @@ export class ParcelsService {
         parcel.receiver.email,
         dto.status,
       )
-      .catch((error) => {
-        console.error('Failed to send status update email:', error.message);
+      .catch((error: unknown) => {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send status update email:', errorMessage);
       });
 
     // Send SMS notifications (non-blocking)
     if (parcel.sender.phone) {
-      this.mailer
-        .sendSms(parcel.sender.phone, `Parcel status updated: ${dto.status}`)
-        .catch((error) => {
-          console.error('Failed to send status SMS to sender:', error.message);
-        });
+      try {
+        this.mailer.sendSms(
+          parcel.sender.phone,
+          `Parcel status updated: ${dto.status}`,
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send status SMS to sender:', errorMessage);
+      }
     }
     if (parcel.receiver.phone) {
-      this.mailer
-        .sendSms(parcel.receiver.phone, `Parcel status updated: ${dto.status}`)
-        .catch((error) => {
-          console.error(
-            'Failed to send status SMS to receiver:',
-            error.message,
-          );
-        });
+      try {
+        this.mailer.sendSms(
+          parcel.receiver.phone,
+          `Parcel status updated: ${dto.status}`,
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error('Failed to send status SMS to receiver:', errorMessage);
+      }
     }
 
     return updated;

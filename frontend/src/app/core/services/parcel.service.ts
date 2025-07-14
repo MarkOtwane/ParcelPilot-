@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { ApiResponse, ParcelsResponse } from '../models/api-response.model';
 
 const API = 'http://localhost:3000';
 
@@ -8,26 +9,41 @@ const API = 'http://localhost:3000';
 export class ParcelService {
   constructor(private http: HttpClient) {}
 
-  getMyParcels(): Promise<{ sent: any[]; received: any[] }> {
-    return firstValueFrom(this.http.get<any>(`${API}/parcels/my`));
+  async getMyParcels(): Promise<ParcelsResponse> {
+    const response = await firstValueFrom(this.http.get<ApiResponse<ParcelsResponse>>(`${API}/parcels/my`));
+    return response.data;
   }
 
-  getAllParcels(): Promise<any[]> {
-    return firstValueFrom(this.http.get<any[]>(`${API}/parcels`));
+  async getAllParcels(): Promise<any[]> {
+    const response = await firstValueFrom(this.http.get<ApiResponse<any[]>>(`${API}/parcels`));
+    return response.data;
   }
 
-  createParcel(data: any): Promise<any> {
-    return firstValueFrom(this.http.post<any>(`${API}/parcels/create`, data));
+  async createParcel(data: any): Promise<any> {
+    const response = await firstValueFrom(this.http.post<ApiResponse<any>>(`${API}/parcels/create`, data));
+    return response.data;
   }
 
-  updateStatus(parcelId: string, status: string): Promise<any> {
-    return firstValueFrom(this.http.patch(`${API}/parcels/update-status`, {
+  async updateStatus(parcelId: string, status: string): Promise<any> {
+    const response = await firstValueFrom(this.http.patch<ApiResponse<any>>(`${API}/parcels/update-status`, {
       parcelId,
       status
     }));
+    return response.data;
   }
 
-  getParcelById(id: string): Promise<any> {
-    return firstValueFrom(this.http.get<any>(`${API}/parcels/${id}`));
+  async getParcelById(id: string): Promise<any> {
+    const response = await firstValueFrom(this.http.get<ApiResponse<any>>(`${API}/parcels/${id}`));
+    return response.data;
+  }
+
+  async deleteParcel(parcelId: string): Promise<any> {
+    const response = await firstValueFrom(this.http.delete<ApiResponse<any>>(`${API}/parcels/${parcelId}`));
+    return response.data;
+  }
+
+  async updateParcel(parcelId: string, data: any): Promise<any> {
+    const response = await firstValueFrom(this.http.patch<ApiResponse<any>>(`${API}/parcels/${parcelId}`, data));
+    return response.data;
   }
 }

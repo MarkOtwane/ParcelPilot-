@@ -1,30 +1,185 @@
 <div class="admin-parcels" *ngIf="!isLoading; else loading">
-  <h2>Manage Parcels</h2>
+  <div class="admin-parcels-header">
+    <h2>Manage Parcels</h2>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="refreshParcels()">
+        Refresh
+      </button>
+      <button class="btn-success" (click)="exportParcels()">
+        Export
+      </button>
+    </div>
+  </div>
 
-  <div *ngIf="parcels.length > 0; else noParcels">
-    <div class="parcel-card" *ngFor="let p of parcels">
-      <p><strong>ID:</strong> {{ p.id }}</p>
-      <p><strong>From:</strong> {{ p.pickupLocation }}</p>
-      <p><strong>To:</strong> {{ p.destination }}</p>
-      <p><strong>Weight:</strong> {{ p.weight }} kg</p>
-      <p>
-        <strong>Status:</strong>
-        <select
-          [value]="p.status"
-          #statusSelect
-          (change)="updateStatus(p.id, statusSelect.value)"
-        >
-          <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
-        </select>
-      </p>
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="statusFilter">Filter by Status:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="searchTerm">Search:</label>
+      <input 
+        type="text" 
+        id="searchTerm" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Search by ID, location, or user..."
+        (input)="applyFilters()"
+      >
+    </div>
+  </div>
+
+  <div *ngIf="filteredParcels.length > 0; else noParcels">
+    <div class="parcels-stats">
+      <span>Total: {{ filteredParcels.length }} parcels</span>
+      <span>Pending: {{ getParcelsByStatus('PENDING').length }}</span>
+      <span>In Transit: {{ getParcelsByStatus('IN_TRANSIT').length }}</span>
+      <span>Delivered: {{ getParcelsByStatus('DELIVERED').length }}</span>
+    </div>
+
+    <div class="parcels-grid">
+      <div class="parcel-card" *ngFor="let p of filteredParcels">
+        <div class="parcel-header">
+          <span class="parcel-id">#{{ p.id.slice(0, 8) }}</span>
+          <span
+            class="parcel-status"
+            [class]="'status-' + p.status.toLowerCase()"
+          >
+            {{ p.status }}
+          </span>
+        </div>
+        <div class="parcel-details">
+          <p><strong>From:</strong> {{ p.pickupLocation }}</p>
+          <p><strong>To:</strong> {{ p.destination }}</p>
+          <p><strong>Weight:</strong> {{ p.weight }} kg</p>
+          <p><strong>Cost:</strong> KES {{ p.cost }}</p>
+          <p>
+            <strong>Sender:</strong>
+            {{ p.sender?.name || p.sender?.email || "N/A" }}
+          </p>
+          <p>
+            <strong>Receiver:</strong>
+            {{ p.receiver?.name || p.receiver?.email || "N/A" }}
+          </p>
+          <p><strong>Created:</strong> {{ p.createdAt | date : "short" }}</p>
+        </div>
+        <div class="parcel-actions">
+          <button class="btn-secondary" (click)="viewParcelDetails(p)">
+            View Details
+          </button>
+          <button class="btn-warning" (click)="editParcel(p)">
+            Edit
+          </button>
+          <button class="btn-danger" (click)="deleteParcel(p.id)">
+            Delete
+          </button>
+          <div class="status-update">
+            <label><strong>Status:</strong></label>
+            <select
+              [value]="p.status"
+              #statusSelect
+              (change)="updateStatus(p.id, statusSelect.value)"
+            >
+              <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <ng-template #noParcels>
-    <p>No parcels found.</p>
+    <div class="no-parcels">
+      <p>No parcels found.</p>
+      <button class="btn-primary" (click)="refreshParcels()">Refresh</button>
+    </div>
   </ng-template>
 </div>
 
+<!-- Parcel Details Modal -->
+<div class="modal-overlay" *ngIf="selectedParcel" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Parcel Details</h3>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedParcel">
+      <div class="detail-section">
+        <h4>Basic Information</h4>
+        <div class="detail-row">
+          <strong>Parcel ID:</strong> {{ selectedParcel.id }}
+        </div>
+        <div class="detail-row">
+          <strong>Status:</strong> 
+          <span [class]="'status-' + selectedParcel.status.toLowerCase()">
+            {{ selectedParcel.status }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <strong>Pickup Location:</strong> {{ selectedParcel.pickupLocation }}
+        </div>
+        <div class="detail-row">
+          <strong>Destination:</strong> {{ selectedParcel.destination }}
+        </div>
+        <div class="detail-row">
+          <strong>Weight:</strong> {{ selectedParcel.weight }}kg
+        </div>
+        <div class="detail-row">
+          <strong>Cost:</strong> KES {{ selectedParcel.cost }}
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Sender Information</h4>
+        <div class="detail-row">
+          <strong>Name:</strong> {{ selectedParcel.sender?.name || 'N/A' }}
+        </div>
+        <div class="detail-row">
+          <strong>Email:</strong> {{ selectedParcel.sender?.email || 'N/A' }}
+        </div>
+        <div class="detail-row">
+          <strong>Phone:</strong> {{ selectedParcel.sender?.phone || 'N/A' }}
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Receiver Information</h4>
+        <div class="detail-row">
+          <strong>Name:</strong> {{ selectedParcel.receiver?.name || 'N/A' }}
+        </div>
+        <div class="detail-row">
+          <strong>Email:</strong> {{ selectedParcel.receiver?.email || 'N/A' }}
+        </div>
+        <div class="detail-row">
+          <strong>Phone:</strong> {{ selectedParcel.receiver?.phone || 'N/A' }}
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Timestamps</h4>
+        <div class="detail-row">
+          <strong>Created:</strong> {{ selectedParcel.createdAt | date : "full" }}
+        </div>
+        <div class="detail-row" *ngIf="selectedParcel.updatedAt">
+          <strong>Last Updated:</strong> {{ selectedParcel.updatedAt | date : "full" }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <ng-template #loading>
-  <p>Loading parcels...</p>
+  <div class="loading">
+    <p>Loading parcels...</p>
+  </div>
 </ng-template>

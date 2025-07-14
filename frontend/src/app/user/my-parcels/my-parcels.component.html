@@ -40,6 +40,27 @@
               <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
             </p>
           </div>
+          <div class="parcel-actions">
+            <button class="btn-secondary" (click)="viewParcelDetails(parcel)">
+              View Details
+            </button>
+            <button 
+              class="btn-warning" 
+              (click)="editParcel(parcel)"
+              [disabled]="parcel.status !== 'PENDING'"
+              title="Can only edit pending parcels"
+            >
+              Edit
+            </button>
+            <button 
+              class="btn-danger" 
+              (click)="deleteParcel(parcel.id)"
+              [disabled]="parcel.status !== 'PENDING'"
+              title="Can only delete pending parcels"
+            >
+              Delete
+            </button>
+          </div>
         </div>
       </div>
       <ng-template #noSentParcels>
@@ -72,11 +93,55 @@
               <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
             </p>
           </div>
+          <div class="parcel-actions">
+            <button class="btn-secondary" (click)="viewParcelDetails(parcel)">
+              View Details
+            </button>
+          </div>
         </div>
       </div>
       <ng-template #noReceivedParcels>
         <p class="no-parcels">No received parcels found.</p>
       </ng-template>
+    </div>
+  </div>
+
+  <!-- Parcel Details Modal -->
+  <div class="modal-overlay" *ngIf="selectedParcel" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Parcel Details</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedParcel">
+        <div class="detail-row">
+          <strong>Parcel ID:</strong> {{ selectedParcel.id }}
+        </div>
+        <div class="detail-row">
+          <strong>Status:</strong> 
+          <span [class]="'status-' + selectedParcel.status.toLowerCase()">
+            {{ selectedParcel.status }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <strong>Pickup Location:</strong> {{ selectedParcel.pickupLocation }}
+        </div>
+        <div class="detail-row">
+          <strong>Destination:</strong> {{ selectedParcel.destination }}
+        </div>
+        <div class="detail-row">
+          <strong>Weight:</strong> {{ selectedParcel.weight }}kg
+        </div>
+        <div class="detail-row">
+          <strong>Cost:</strong> ${{ selectedParcel.cost }}
+        </div>
+        <div class="detail-row">
+          <strong>Created:</strong> {{ selectedParcel.createdAt | date : "full" }}
+        </div>
+        <div class="detail-row" *ngIf="selectedParcel.updatedAt">
+          <strong>Last Updated:</strong> {{ selectedParcel.updatedAt | date : "full" }}
+        </div>
+      </div>
     </div>
   </div>
 

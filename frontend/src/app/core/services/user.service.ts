@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { ApiResponse } from '../models/api-response.model';
 
 const API = 'http://localhost:3000/users';
 
@@ -9,22 +10,37 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   async getMyProfile(): Promise<any> {
-    return firstValueFrom(this.http.get(`${API}/me`));
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<any>>(`${API}/me`)
+    );
+    return response.data;
   }
 
   async updateProfile(data: any): Promise<any> {
-    return firstValueFrom(this.http.patch(`${API}/update`, data));
+    const response = await firstValueFrom(
+      this.http.patch<ApiResponse<any>>(`${API}/update`, data)
+    );
+    return response.data;
   }
 
   async changePassword(data: any): Promise<any> {
-    return firstValueFrom(this.http.patch(`${API}/change-password`, data));
+    const response = await firstValueFrom(
+      this.http.patch<ApiResponse<any>>(`${API}/change-password`, data)
+    );
+    return response.data;
   }
 
   async deactivateAccount(): Promise<any> {
-    return firstValueFrom(this.http.delete(`${API}/deactivate`));
+    const response = await firstValueFrom(
+      this.http.delete<ApiResponse<any>>(`${API}/deactivate`)
+    );
+    return response.data;
   }
 
-  async getAllUsers(): Promise<any> {
-    return firstValueFrom(this.http.get(`${API}`));
+  async getAllUsers(): Promise<any[]> {
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<any[]>>(`${API}`)
+    );
+    return response.data;
   }
 }

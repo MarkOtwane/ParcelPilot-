@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { ApiResponse } from '../models/api-response.model';
 
 const API = 'http://localhost:3000/support';
 
@@ -9,14 +10,23 @@ export class SupportService {
   constructor(private http: HttpClient) {}
 
   async createTicket(data: any): Promise<any> {
-    return firstValueFrom(this.http.post(`${API}`, data));
+    const response = await firstValueFrom(
+      this.http.post<ApiResponse<any>>(`${API}`, data)
+    );
+    return response.data;
   }
 
-  async getAllTickets(): Promise<any> {
-    return firstValueFrom(this.http.get(`${API}`));
+  async getAllTickets(): Promise<any[]> {
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<any[]>>(`${API}`)
+    );
+    return response.data;
   }
 
   async respondToTicket(ticketId: string, response: string): Promise<any> {
-    return firstValueFrom(this.http.post(`${API}/respond`, { ticketId, response }));
+    const apiResponse = await firstValueFrom(
+      this.http.post<ApiResponse<any>>(`${API}/respond`, { ticketId, response })
+    );
+    return apiResponse.data;
   }
 }

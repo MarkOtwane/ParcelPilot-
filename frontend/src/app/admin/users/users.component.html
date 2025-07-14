@@ -22,9 +22,15 @@
         </div>
         <div class="user-details">
           <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Name:</strong> {{ user.name || 'N/A' }}</p>
-          <p><strong>Phone:</strong> {{ user.phone || 'N/A' }}</p>
-          <p><strong>Created:</strong> {{ user.createdAt | date:'short' }}</p>
+          <p><strong>Name:</strong> {{ user.name || "N/A" }}</p>
+          <p><strong>Phone:</strong> {{ user.phone || "N/A" }}</p>
+          <p><strong>Created:</strong> {{ user.createdAt | date : "short" }}</p>
+        </div>
+        <div class="user-actions">
+          <button class="btn-edit" (click)="editUser(user)">Edit</button>
+          <button class="btn-delete" (click)="deleteUser(user.id)">
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -32,4 +38,4 @@
       <p class="no-users">No users found.</p>
     </ng-template>
   </div>
-</div> 
+</div>

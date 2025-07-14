@@ -29,9 +29,14 @@ export class DashboardComponent implements OnInit {
     this.error = '';
 
     try {
+      console.log('Admin Dashboard - calling getMetrics()');
       this.metrics = await this.metricsService.getMetrics();
+      console.log('Admin Dashboard - metrics:', this.metrics);
+      
       this.stats = this.metrics; // Map metrics to stats for template compatibility
+      console.log('Admin Dashboard - stats:', this.stats);
     } catch (error: any) {
+      console.error('Admin Dashboard - error:', error);
       this.error = error.error?.message || 'Failed to load metrics.';
     } finally {
       this.loading = false;
