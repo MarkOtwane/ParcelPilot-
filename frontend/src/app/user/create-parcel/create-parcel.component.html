@@ -146,6 +146,7 @@
             parcelForm.get('weight')?.invalid &&
             parcelForm.get('weight')?.touched
           "
+          (input)="onWeightChange()"
         />
         <div
           class="error-message"
@@ -161,6 +162,25 @@
             >Weight must be at least 0.1 kg</span
           >
         </div>
+      </div>
+
+      <div class="form-group" *ngIf="distance && calculatedCost">
+        <label>Distance:</label>
+        <span>{{ distance }} km</span>
+      </div>
+      <div class="form-group" *ngIf="calculatedCost">
+        <label>Calculated Cost:</label>
+        <span>KES {{ calculatedCost }}</span>
+      </div>
+      <div class="form-group" *ngIf="calculatedCost && !paymentConfirmed">
+        <button type="button" class="btn-primary" (click)="confirmPayment()">
+          Pay Now
+        </button>
+      </div>
+      <div class="form-group" *ngIf="paymentConfirmed">
+        <span class="success-message"
+          >Payment confirmed. You can now create the parcel.</span
+        >
       </div>
 
       <div class="form-group">
@@ -203,7 +223,7 @@
       <button
         type="submit"
         class="btn-primary"
-        [disabled]="parcelForm.invalid || loading"
+        [disabled]="parcelForm.invalid || loading || !paymentConfirmed"
       >
         <span *ngIf="loading">Creating...</span>
         <span *ngIf="!loading">Create Parcel</span>

@@ -6,9 +6,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { GoogleMapsModule } from '@angular/google-maps';
 import { Router, RouterModule } from '@angular/router';
 import { ParcelService } from '../../core/services/parcel.service';
-import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
   selector: 'app-create-parcel',
@@ -27,6 +27,11 @@ export class CreateParcelComponent {
   pickupCenter = { lat: -1.286389, lng: 36.817223 };
   destinationCenter = { lat: -1.286389, lng: 36.817223 };
   mapZoom = 12;
+
+  distance: number | null = null;
+  calculatedCost: number | null = null;
+  paymentConfirmed = false;
+  baseRatePerKm = 10; // KES per km per kg
 
   constructor(
     private fb: FormBuilder,
@@ -55,6 +60,7 @@ export class CreateParcelComponent {
         pickupLng: coords.lng,
       });
       this.pickupCenter = coords;
+      this.calculateDistanceAndCost();
     }
   }
 
@@ -67,19 +73,65 @@ export class CreateParcelComponent {
         destinationLng: coords.lng,
       });
       this.destinationCenter = coords;
+      this.calculateDistanceAndCost();
     }
+  }
+
+  calculateDistanceAndCost() {
+    const { pickupLat, pickupLng, destinationLat, destinationLng, weight } =
+      this.parcelForm.value;
+    if (
+      pickupLat != null &&
+      pickupLng != null &&
+      destinationLat != null &&
+      destinationLng != null &&
+      weight > 0
+    ) {
+      // Haversine formula
+      const toRad = (x: number) => (x * Math.PI) / 180;
+      const R = 6371; // km
+      const dLat = toRad(destinationLat - pickupLat);
+      const dLng = toRad(destinationLng - pickupLng);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(pickupLat)) *
+          Math.cos(toRad(destinationLat)) *
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      this.distance = Math.round(R * c);
+      this.calculatedCost = this.baseRatePerKm * this.distance * weight;
+    } else {
+      this.distance = null;
+      this.calculatedCost = null;
+    }
+  }
+
+  onWeightChange() {
+    this.calculateDistanceAndCost();
+  }
+
+  confirmPayment() {
+    this.paymentConfirmed = true;
   }
 
   async onSubmit() {
     console.log('Form value:', this.parcelForm.value);
     console.log('Form valid:', this.parcelForm.valid);
+    if (!this.paymentConfirmed) {
+      this.error = 'Please confirm payment before submitting.';
+      return;
+    }
     if (this.parcelForm.valid) {
       this.loading = true;
       this.error = '';
       this.success = '';
 
       try {
-        await this.parcelService.createParcel(this.parcelForm.value);
+        await this.parcelService.createParcel({
+          ...this.parcelForm.value,
+          cost: this.calculatedCost,
+        });
         this.success = 'Parcel created successfully!';
         setTimeout(() => {
           this.router.navigate(['/user/my-parcels']);
