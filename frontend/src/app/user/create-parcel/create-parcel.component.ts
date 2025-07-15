@@ -127,11 +127,22 @@ export class CreateParcelComponent {
       this.error = '';
       this.success = '';
 
+      // Clean form data: remove null/empty/undefined optional fields
+      const rawData = { ...this.parcelForm.value, cost: this.calculatedCost };
+      const cleanedData: any = {};
+      Object.keys(rawData).forEach((key) => {
+        const value = rawData[key];
+        if (
+          value !== null &&
+          value !== undefined &&
+          !(typeof value === 'string' && value.trim() === '')
+        ) {
+          cleanedData[key] = value;
+        }
+      });
+
       try {
-        await this.parcelService.createParcel({
-          ...this.parcelForm.value,
-          cost: this.calculatedCost,
-        });
+        await this.parcelService.createParcel(cleanedData);
         this.success = 'Parcel created successfully!';
         setTimeout(() => {
           this.router.navigate(['/user/my-parcels']);
