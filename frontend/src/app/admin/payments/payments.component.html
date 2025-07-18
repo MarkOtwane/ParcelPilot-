@@ -1,7 +1,9 @@
-<div class="payments-container">
-  <div class="payments-header">
-    <h1>All Payments</h1>
+<div class="payments-header">
+  <h1>Payments</h1>
+  <div style="margin-bottom: 1rem;">
+    <a routerLink="/admin/dashboard" class="btn-primary">&larr; Back to Dashboard</a>
   </div>
+</div>
 
   <div class="loading" *ngIf="loading">
     <p>Loading payments...</p>
@@ -16,15 +18,20 @@
       <div class="payment-card" *ngFor="let payment of payments">
         <div class="payment-header">
           <span class="payment-id">#{{ payment.id.slice(0, 8) }}</span>
-          <span class="payment-status" [class]="'status-' + payment.status.toLowerCase()">
+          <span
+            class="payment-status"
+            [class]="'status-' + payment.status.toLowerCase()"
+          >
             {{ payment.status }}
           </span>
         </div>
         <div class="payment-details">
-          <p><strong>User:</strong> {{ payment.user?.email || 'N/A' }}</p>
+          <p><strong>User:</strong> {{ payment.user?.email || "N/A" }}</p>
           <p><strong>Amount:</strong> ${{ payment.amount }}</p>
           <p><strong>Method:</strong> {{ payment.paymentMethod }}</p>
-          <p><strong>Created:</strong> {{ payment.createdAt | date:'short' }}</p>
+          <p>
+            <strong>Created:</strong> {{ payment.createdAt | date : "short" }}
+          </p>
         </div>
       </div>
     </div>
@@ -32,4 +39,4 @@
       <p class="no-payments">No payments found.</p>
     </ng-template>
   </div>
-</div> 
+</div>

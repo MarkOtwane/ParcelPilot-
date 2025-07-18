@@ -1,13 +1,12 @@
-<div class="admin-parcels" *ngIf="!isLoading; else loading">
+<div class="admin-parcels">
   <div class="admin-parcels-header">
-    <h2>Manage Parcels</h2>
+    <h1>Parcels</h1>
+    <div style="margin-bottom: 1rem;">
+      <a routerLink="/admin/dashboard" class="btn-primary">&larr; Back to Dashboard</a>
+    </div>
     <div class="header-actions">
-      <button class="btn-primary" (click)="refreshParcels()">
-        Refresh
-      </button>
-      <button class="btn-success" (click)="exportParcels()">
-        Export
-      </button>
+      <button class="btn-primary" (click)="refreshParcels()">Refresh</button>
+      <button class="btn-success" (click)="exportParcels()">Export</button>
     </div>
   </div>
 
@@ -42,9 +41,9 @@
         <td>{{ parcel.destination }}</td>
         <td>{{ parcel.weight }}</td>
         <td>{{ parcel.cost }}</td>
-        <td>{{ parcel.sender?.name || parcel.sender?.email || 'N/A' }}</td>
-        <td>{{ parcel.receiver?.name || parcel.receiver?.email || 'N/A' }}</td>
-        <td>{{ parcel.createdAt | date:'short' }}</td>
+        <td>{{ parcel.sender?.name || parcel.sender?.email || "N/A" }}</td>
+        <td>{{ parcel.receiver?.name || parcel.receiver?.email || "N/A" }}</td>
+        <td>{{ parcel.createdAt | date : "short" }}</td>
         <td>
           <select
             [value]="parcel.status"
@@ -70,22 +69,47 @@
     <div class="modal-content">
       <h3>Edit Parcel</h3>
       <form (ngSubmit)="saveParcel()">
-        <label>Pickup Location:
-          <input [(ngModel)]="editForm.pickupLocation" name="pickupLocation" required />
+        <label
+          >Pickup Location:
+          <input
+            [(ngModel)]="editForm.pickupLocation"
+            name="pickupLocation"
+            required
+          />
         </label>
-        <label>Destination:
-          <input [(ngModel)]="editForm.destination" name="destination" required />
+        <label
+          >Destination:
+          <input
+            [(ngModel)]="editForm.destination"
+            name="destination"
+            required
+          />
         </label>
-        <label>Weight:
-          <input type="number" [(ngModel)]="editForm.weight" name="weight" required />
+        <label
+          >Weight:
+          <input
+            type="number"
+            [(ngModel)]="editForm.weight"
+            name="weight"
+            required
+          />
         </label>
-        <label>Status:
+        <label
+          >Status:
           <select [(ngModel)]="editForm.status" name="status" required>
-            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+            <option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </option>
           </select>
         </label>
-        <label>Cost:
-          <input type="number" [(ngModel)]="editForm.cost" name="cost" required />
+        <label
+          >Cost:
+          <input
+            type="number"
+            [(ngModel)]="editForm.cost"
+            name="cost"
+            required
+          />
         </label>
         <div class="modal-actions">
           <button type="submit">Save</button>
@@ -101,13 +125,30 @@
       <h3>Parcel Details</h3>
       <p><strong>ID:</strong> {{ selectedParcel.id }}</p>
       <p><strong>Status:</strong> {{ selectedParcel.status }}</p>
-      <p><strong>Pickup Location:</strong> {{ selectedParcel.pickupLocation }}</p>
+      <p>
+        <strong>Pickup Location:</strong> {{ selectedParcel.pickupLocation }}
+      </p>
       <p><strong>Destination:</strong> {{ selectedParcel.destination }}</p>
       <p><strong>Weight:</strong> {{ selectedParcel.weight }}</p>
       <p><strong>Cost:</strong> {{ selectedParcel.cost }}</p>
-      <p><strong>Sender:</strong> {{ selectedParcel.sender?.name || selectedParcel.sender?.email || 'N/A' }}</p>
-      <p><strong>Receiver:</strong> {{ selectedParcel.receiver?.name || selectedParcel.receiver?.email || 'N/A' }}</p>
-      <p><strong>Created:</strong> {{ selectedParcel.createdAt | date:'short' }}</p>
+      <p>
+        <strong>Sender:</strong>
+        {{
+          selectedParcel.sender?.name || selectedParcel.sender?.email || "N/A"
+        }}
+      </p>
+      <p>
+        <strong>Receiver:</strong>
+        {{
+          selectedParcel.receiver?.name ||
+            selectedParcel.receiver?.email ||
+            "N/A"
+        }}
+      </p>
+      <p>
+        <strong>Created:</strong>
+        {{ selectedParcel.createdAt | date : "short" }}
+      </p>
       <div class="modal-actions">
         <button (click)="closeModal()">Close</button>
       </div>
@@ -117,29 +158,35 @@
   <div class="filters-section">
     <div class="filter-group">
       <label for="statusFilter">Filter by Status:</label>
-      <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyFilters()">
+      <select
+        id="statusFilter"
+        [(ngModel)]="statusFilter"
+        (change)="applyFilters()"
+      >
         <option value="">All Statuses</option>
-        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        <option *ngFor="let status of statusOptions" [value]="status">
+          {{ status }}
+        </option>
       </select>
     </div>
     <div class="filter-group">
       <label for="searchTerm">Search:</label>
-      <input 
-        type="text" 
-        id="searchTerm" 
-        [(ngModel)]="searchTerm" 
+      <input
+        type="text"
+        id="searchTerm"
+        [(ngModel)]="searchTerm"
         placeholder="Search by ID, location, or user..."
         (input)="applyFilters()"
-      >
+      />
     </div>
   </div>
 
   <div *ngIf="filteredParcels.length > 0; else noParcels">
     <div class="parcels-stats">
       <span>Total: {{ filteredParcels.length }} parcels</span>
-      <span>Pending: {{ getParcelsByStatus('PENDING').length }}</span>
-      <span>In Transit: {{ getParcelsByStatus('IN_TRANSIT').length }}</span>
-      <span>Delivered: {{ getParcelsByStatus('DELIVERED').length }}</span>
+      <span>Pending: {{ getParcelsByStatus("PENDING").length }}</span>
+      <span>In Transit: {{ getParcelsByStatus("IN_TRANSIT").length }}</span>
+      <span>Delivered: {{ getParcelsByStatus("DELIVERED").length }}</span>
     </div>
 
     <div class="parcels-grid">
@@ -172,9 +219,7 @@
           <button class="btn-secondary" (click)="viewParcelDetails(p)">
             View Details
           </button>
-          <button class="btn-warning" (click)="editParcel(p)">
-            Edit
-          </button>
+          <button class="btn-warning" (click)="editParcel(p)">Edit</button>
           <button class="btn-danger" (click)="deleteParcel(p.id)">
             Delete
           </button>
@@ -185,7 +230,9 @@
               #statusSelect
               (change)="updateStatus(p.id, statusSelect.value)"
             >
-              <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+              <option *ngFor="let s of statusOptions" [value]="s">
+                {{ s }}
+              </option>
             </select>
           </div>
         </div>
@@ -215,7 +262,7 @@
           <strong>Parcel ID:</strong> {{ selectedParcel.id }}
         </div>
         <div class="detail-row">
-          <strong>Status:</strong> 
+          <strong>Status:</strong>
           <span [class]="'status-' + selectedParcel.status.toLowerCase()">
             {{ selectedParcel.status }}
           </span>
@@ -233,40 +280,42 @@
           <strong>Cost:</strong> KES {{ selectedParcel.cost }}
         </div>
       </div>
-      
+
       <div class="detail-section">
         <h4>Sender Information</h4>
         <div class="detail-row">
-          <strong>Name:</strong> {{ selectedParcel.sender?.name || 'N/A' }}
+          <strong>Name:</strong> {{ selectedParcel.sender?.name || "N/A" }}
         </div>
         <div class="detail-row">
-          <strong>Email:</strong> {{ selectedParcel.sender?.email || 'N/A' }}
+          <strong>Email:</strong> {{ selectedParcel.sender?.email || "N/A" }}
         </div>
         <div class="detail-row">
-          <strong>Phone:</strong> {{ selectedParcel.sender?.phone || 'N/A' }}
+          <strong>Phone:</strong> {{ selectedParcel.sender?.phone || "N/A" }}
         </div>
       </div>
-      
+
       <div class="detail-section">
         <h4>Receiver Information</h4>
         <div class="detail-row">
-          <strong>Name:</strong> {{ selectedParcel.receiver?.name || 'N/A' }}
+          <strong>Name:</strong> {{ selectedParcel.receiver?.name || "N/A" }}
         </div>
         <div class="detail-row">
-          <strong>Email:</strong> {{ selectedParcel.receiver?.email || 'N/A' }}
+          <strong>Email:</strong> {{ selectedParcel.receiver?.email || "N/A" }}
         </div>
         <div class="detail-row">
-          <strong>Phone:</strong> {{ selectedParcel.receiver?.phone || 'N/A' }}
+          <strong>Phone:</strong> {{ selectedParcel.receiver?.phone || "N/A" }}
         </div>
       </div>
-      
+
       <div class="detail-section">
         <h4>Timestamps</h4>
         <div class="detail-row">
-          <strong>Created:</strong> {{ selectedParcel.createdAt | date : "full" }}
+          <strong>Created:</strong>
+          {{ selectedParcel.createdAt | date : "full" }}
         </div>
         <div class="detail-row" *ngIf="selectedParcel.updatedAt">
-          <strong>Last Updated:</strong> {{ selectedParcel.updatedAt | date : "full" }}
+          <strong>Last Updated:</strong>
+          {{ selectedParcel.updatedAt | date : "full" }}
         </div>
       </div>
     </div>

@@ -4,10 +4,10 @@
   <div *ngIf="payments.length > 0; else noPayments">
     <div class="payment-card" *ngFor="let p of payments">
       <p><strong>Parcel:</strong> {{ p.parcel?.destination }}</p>
-      <p><strong>Amount:</strong> KES {{ p.amount }}</p>
+      <p><strong>Payment Made:</strong> KES {{ p.amount }}</p>
       <p><strong>Method:</strong> {{ p.method }}</p>
       <p><strong>Status:</strong> {{ p.status }}</p>
-      <p><strong>Date:</strong> {{ p.createdAt | date: 'medium' }}</p>
+      <p><strong>Date:</strong> {{ p.createdAt | date : "medium" }}</p>
     </div>
   </div>
 

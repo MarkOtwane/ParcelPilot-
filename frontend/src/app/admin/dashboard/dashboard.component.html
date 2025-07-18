@@ -1,3 +1,18 @@
+<div class="admin-sidebar">
+  <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+  <a routerLink="/admin/parcels" routerLinkActive="active">Parcels</a>
+  <a routerLink="/admin/users" routerLinkActive="active">Users</a>
+  <a routerLink="/admin/payments" routerLinkActive="active">Payments</a>
+  <a routerLink="/admin/metrics" routerLinkActive="active">Metrics</a>
+  <a routerLink="/admin/support" routerLinkActive="active">Support</a>
+  <a
+    routerLink="/admin/create-parcel"
+    routerLinkActive="active"
+    class="btn-primary"
+    style="margin-top: 2rem"
+    >Create New Parcel</a
+  >
+</div>
 <div class="admin-dashboard" *ngIf="!isLoading; else loading">
   <h2>Admin Dashboard</h2>
 

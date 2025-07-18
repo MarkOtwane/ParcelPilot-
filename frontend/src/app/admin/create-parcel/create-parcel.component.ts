@@ -6,16 +6,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { Router, RouterModule } from '@angular/router';
 import { ParcelService } from '../../core/services/parcel.service';
+import { PaymentService } from '../../core/services/payment.service';
 
 @Component({
   selector: 'app-create-parcel',
   templateUrl: './create-parcel.component.html',
   styleUrls: ['./create-parcel.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, GoogleMapsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule], // Removed GoogleMapsModule
 })
 export class CreateParcelComponent {
   parcelForm: FormGroup;
@@ -23,92 +23,43 @@ export class CreateParcelComponent {
   error = '';
   success = '';
 
-  // Google Maps state
-  pickupCenter = { lat: -1.286389, lng: 36.817223 };
-  destinationCenter = { lat: -1.286389, lng: 36.817223 };
-  mapZoom = 12;
+  // Removed Google Maps state
+  // pickupCenter = { lat: -1.286389, lng: 36.817223 };
+  // destinationCenter = { lat: -1.286389, lng: 36.817223 };
+  // mapZoom = 12;
 
-  distance: number | null = null;
+  // Removed distance and cost calculation based on coordinates
   calculatedCost: number | null = null;
   paymentConfirmed = false;
-  baseRatePerKm = 10; // KES per km per kg
+  baseRate = 100; // Flat rate per parcel (or per kg if you want)
 
   constructor(
     private fb: FormBuilder,
     private parcelService: ParcelService,
+    private paymentService: PaymentService,
     private router: Router
   ) {
     this.parcelForm = this.fb.group({
+      senderEmail: ['', [Validators.required, Validators.email]],
       receiverEmail: ['', [Validators.required, Validators.email]],
       pickupLocation: ['', [Validators.required]],
       destination: ['', [Validators.required]],
       weight: ['', [Validators.required, Validators.min(0.1)]],
       description: ['', [Validators.required, Validators.minLength(5)]],
-      pickupLat: [null, Validators.required],
-      pickupLng: [null, Validators.required],
-      destinationLat: [null, Validators.required],
-      destinationLng: [null, Validators.required],
+      // Removed pickupLat, pickupLng, destinationLat, destinationLng
     });
   }
 
-  setPickupLocation(event: google.maps.MapMouseEvent) {
-    const coords = event.latLng?.toJSON();
-    if (coords) {
-      console.log('Pickup location set:', coords);
-      this.parcelForm.patchValue({
-        pickupLat: coords.lat,
-        pickupLng: coords.lng,
-      });
-      this.pickupCenter = coords;
-      this.calculateDistanceAndCost();
-    }
-  }
+  // Removed setPickupLocation and setDestinationLocation
 
-  setDestinationLocation(event: google.maps.MapMouseEvent) {
-    const coords = event.latLng?.toJSON();
-    if (coords) {
-      console.log('Destination location set:', coords);
-      this.parcelForm.patchValue({
-        destinationLat: coords.lat,
-        destinationLng: coords.lng,
-      });
-      this.destinationCenter = coords;
-      this.calculateDistanceAndCost();
-    }
-  }
-
-  calculateDistanceAndCost() {
-    const { pickupLat, pickupLng, destinationLat, destinationLng, weight } =
-      this.parcelForm.value;
-    if (
-      pickupLat != null &&
-      pickupLng != null &&
-      destinationLat != null &&
-      destinationLng != null &&
-      weight > 0
-    ) {
-      // Haversine formula
-      const toRad = (x: number) => (x * Math.PI) / 180;
-      const R = 6371; // km
-      const dLat = toRad(destinationLat - pickupLat);
-      const dLng = toRad(destinationLng - pickupLng);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(pickupLat)) *
-          Math.cos(toRad(destinationLat)) *
-          Math.sin(dLng / 2) *
-          Math.sin(dLng / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      this.distance = Math.round(R * c);
-      this.calculatedCost = this.baseRatePerKm * this.distance * weight;
+  // Simple cost calculation (e.g., per kg)
+  onWeightChange() {
+    const weight = this.parcelForm.value.weight;
+    if (weight > 0) {
+      this.calculatedCost = this.baseRate * weight;
     } else {
-      this.distance = null;
       this.calculatedCost = null;
     }
-  }
-
-  onWeightChange() {
-    this.calculateDistanceAndCost();
   }
 
   confirmPayment() {
@@ -127,25 +78,38 @@ export class CreateParcelComponent {
       this.error = '';
       this.success = '';
 
-      // Clean form data: remove null/empty/undefined optional fields
-      const rawData = { ...this.parcelForm.value, cost: this.calculatedCost };
+      // Clean form data: remove null/empty/undefined optional fields and forbidden fields
+      const rawData = { ...this.parcelForm.value };
+      const forbiddenFields = [
+        'cost',
+        'pickupLat',
+        'pickupLng',
+        'destinationLat',
+        'destinationLng',
+      ];
       const cleanedData: any = {};
       Object.keys(rawData).forEach((key) => {
         const value = rawData[key];
         if (
           value !== null &&
           value !== undefined &&
-          !(typeof value === 'string' && value.trim() === '')
+          !(typeof value === 'string' && value.trim() === '') &&
+          !forbiddenFields.includes(key)
         ) {
           cleanedData[key] = value;
         }
       });
 
       try {
-        await this.parcelService.createParcel(cleanedData);
-        this.success = 'Parcel created successfully!';
+        const parcel = await this.parcelService.createParcel(cleanedData);
+        // Automatically initiate payment for the created parcel
+        await this.paymentService.initiatePayment({
+          parcelId: parcel.id,
+          method: 'MPESA', // or your default method
+        });
+        this.success = 'Parcel created and payment initiated successfully!';
         setTimeout(() => {
-          this.router.navigate(['/user/my-parcels']);
+          this.router.navigate(['/user/payments']);
         }, 2000);
       } catch (error: any) {
         console.error('Parcel creation error:', error);

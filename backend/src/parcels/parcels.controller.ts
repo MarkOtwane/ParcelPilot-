@@ -22,6 +22,7 @@ import { ParcelsService } from './parcels.service';
 export class ParcelsController {
   constructor(private readonly parcelsService: ParcelsService) {}
 
+  @Roles(Role.ADMIN)
   @Post('create')
   createParcel(
     @Request() req: { user: { sub: string } },

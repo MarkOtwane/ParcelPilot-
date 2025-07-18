@@ -1,3 +1,11 @@
+<div class="admin-support-header">
+  <h1>Support</h1>
+  <div style="margin-bottom: 1rem">
+    <a routerLink="/admin/dashboard" class="btn-primary"
+      >&larr; Back to Dashboard</a
+    >
+  </div>
+</div>
 <div class="admin-support" *ngIf="!isLoading; else loading">
   <h2>Support Tickets</h2>
 
@@ -5,7 +13,7 @@
     <div class="ticket-card" *ngFor="let t of tickets">
       <p><strong>Email:</strong> {{ t.email }}</p>
       <p><strong>Message:</strong> {{ t.message }}</p>
-      <p><strong>Date:</strong> {{ t.createdAt | date: 'short' }}</p>
+      <p><strong>Date:</strong> {{ t.createdAt | date : "short" }}</p>
 
       <div *ngIf="t.response; else respondForm">
         <p class="response"><strong>Response:</strong> {{ t.response }}</p>
@@ -13,7 +21,11 @@
 
       <ng-template #respondForm>
         <div *ngIf="respondingId === t.id; else respondBtn">
-          <textarea [(ngModel)]="responseText" rows="3" placeholder="Type your reply..."></textarea>
+          <textarea
+            [(ngModel)]="responseText"
+            rows="3"
+            placeholder="Type your reply..."
+          ></textarea>
           <button (click)="sendResponse(t.id)">Send</button>
           <button (click)="respondingId = null" class="cancel">Cancel</button>
         </div>

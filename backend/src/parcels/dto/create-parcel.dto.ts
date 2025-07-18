@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateParcelDto {
   @IsEmail()
@@ -19,12 +19,16 @@ export class CreateParcelDto {
   @IsString()
   description?: string;
 
+  @IsOptional()
   @IsNumber()
   pickupLat?: number;
+  @IsOptional()
   @IsNumber()
   pickupLng?: number;
+  @IsOptional()
   @IsNumber()
   destinationLat?: number;
+  @IsOptional()
   @IsNumber()
   destinationLng?: number;
 }

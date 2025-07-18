@@ -1,7 +1,9 @@
-<div class="users-container">
-  <div class="users-header">
-    <h1>All Users</h1>
+<div class="users-header">
+  <h1>Users</h1>
+  <div style="margin-bottom: 1rem;">
+    <a routerLink="/admin/dashboard" class="btn-primary">&larr; Back to Dashboard</a>
   </div>
+</div>
 
   <!-- Success and error messages -->
   <div *ngIf="error" class="error-message">{{ error }}</div>
@@ -29,7 +31,7 @@
         <td>{{ user.email }}</td>
         <td>{{ user.phone }}</td>
         <td>{{ user.role }}</td>
-        <td>{{ user.createdAt | date:'short' }}</td>
+        <td>{{ user.createdAt | date : "short" }}</td>
         <td>
           <button (click)="viewUserDetails(user)">View</button>
           <button (click)="editUser(user)">Edit</button>
@@ -44,10 +46,12 @@
     <div class="modal-content">
       <h3>Edit User</h3>
       <form (ngSubmit)="saveUser()">
-        <label>Name:
+        <label
+          >Name:
           <input [(ngModel)]="editForm.name" name="name" required />
         </label>
-        <label>Phone:
+        <label
+          >Phone:
           <input [(ngModel)]="editForm.phone" name="phone" required />
         </label>
         <div class="modal-actions">
@@ -67,7 +71,9 @@
       <p><strong>Email:</strong> {{ selectedUser.email }}</p>
       <p><strong>Phone:</strong> {{ selectedUser.phone }}</p>
       <p><strong>Role:</strong> {{ selectedUser.role }}</p>
-      <p><strong>Created:</strong> {{ selectedUser.createdAt | date:'short' }}</p>
+      <p>
+        <strong>Created:</strong> {{ selectedUser.createdAt | date : "short" }}
+      </p>
       <div class="modal-actions">
         <button (click)="closeModal()">Close</button>
       </div>

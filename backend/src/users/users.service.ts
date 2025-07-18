@@ -62,11 +62,13 @@ export class UsersService {
   }
 
   async softDeleteUser(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.role === Role.ADMIN) throw new ForbiddenException('Admin users cannot be deleted.');
     await this.prisma.user.update({
       where: { id: userId },
       data: { deletedAt: new Date() },
     });
-
     return { message: 'User account deactivated.' };
   }
 

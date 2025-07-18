@@ -16,7 +16,7 @@ import { MailerService } from './mailer.service';
           service: 'gmail',
           host: 'smtp.gmail.com',
           port: 587,
-          secure: false, // true for 465, false for other ports
+          secure: false,
           auth: {
             user: config.get<string>('GMAIL_USER') || 'your-email@gmail.com',
             pass:

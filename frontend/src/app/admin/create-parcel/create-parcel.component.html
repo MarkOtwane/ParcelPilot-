@@ -5,6 +5,12 @@
       <p>Fill in the details below to create a new parcel delivery</p>
     </div>
 
+    <div style="margin-bottom: 1rem">
+      <a routerLink="../dashboard" class="btn-primary"
+        >&larr; Back to Dashboard</a
+      >
+    </div>
+
     <form
       [formGroup]="parcelForm"
       (ngSubmit)="onSubmit()"
@@ -40,6 +46,35 @@
       </div>
 
       <div class="form-group">
+        <label for="senderEmail">Sender Email</label>
+        <input
+          type="email"
+          id="senderEmail"
+          formControlName="senderEmail"
+          placeholder="Enter sender email"
+          class="form-control"
+          [class.error]="
+            parcelForm.get('senderEmail')?.invalid &&
+            parcelForm.get('senderEmail')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('senderEmail')?.invalid &&
+            parcelForm.get('senderEmail')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('senderEmail')?.errors?.['required']"
+            >Sender email is required</span
+          >
+          <span *ngIf="parcelForm.get('senderEmail')?.errors?.['email']"
+            >Please enter a valid email address</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
         <label for="pickupLocation">Pickup Location Name</label>
         <input
           type="text"
@@ -66,26 +101,6 @@
       </div>
 
       <div class="form-group">
-        <label>Pickup Location (select on map for direction only)</label>
-        <google-map
-          height="300px"
-          width="100%"
-          [center]="pickupCenter"
-          [zoom]="mapZoom"
-          (mapClick)="setPickupLocation($event)"
-        >
-          <map-marker
-            *ngIf="parcelForm.value.pickupLat && parcelForm.value.pickupLng"
-            [position]="{
-              lat: parcelForm.value.pickupLat,
-              lng: parcelForm.value.pickupLng
-            }"
-          >
-          </map-marker>
-        </google-map>
-      </div>
-
-      <div class="form-group">
         <label for="destination">Destination Name</label>
         <input
           type="text"
@@ -109,28 +124,6 @@
             >Destination name is required</span
           >
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>Destination Location (select on map for direction only)</label>
-        <google-map
-          height="300px"
-          width="100%"
-          [center]="destinationCenter"
-          [zoom]="mapZoom"
-          (mapClick)="setDestinationLocation($event)"
-        >
-          <map-marker
-            *ngIf="
-              parcelForm.value.destinationLat && parcelForm.value.destinationLng
-            "
-            [position]="{
-              lat: parcelForm.value.destinationLat,
-              lng: parcelForm.value.destinationLng
-            }"
-          >
-          </map-marker>
-        </google-map>
       </div>
 
       <div class="form-group">
@@ -164,10 +157,6 @@
         </div>
       </div>
 
-      <div class="form-group" *ngIf="distance && calculatedCost">
-        <label>Distance:</label>
-        <span>{{ distance }} km</span>
-      </div>
       <div class="form-group" *ngIf="calculatedCost">
         <label>Calculated Cost:</label>
         <span>KES {{ calculatedCost }}</span>

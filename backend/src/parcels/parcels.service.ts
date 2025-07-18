@@ -226,7 +226,7 @@ export class ParcelsService {
     return parcel;
   }
 
-  async updateParcel(id: string, dto: any, role: Role) {
+  async updateParcel(id: string, dto: Partial<CreateParcelDto>, role: Role) {
     if (role !== 'ADMIN') {
       throw new ForbiddenException('Only admins can update parcels');
     }
@@ -246,8 +246,9 @@ export class ParcelsService {
         pickupLocation: dto.pickupLocation,
         destination: dto.destination,
         weight: dto.weight,
-        status: dto.status,
-        cost: dto.cost ? this.calculateCost(dto.cost) : undefined,
+        // Remove status and cost as they are not part of CreateParcelDto
+        // If cost needs to be updated, recalculate based on weight
+        cost: dto.weight ? this.calculateCost(dto.weight) : undefined,
       },
       include: {
         sender: {
@@ -272,7 +273,11 @@ export class ParcelsService {
     return updated;
   }
 
-  async updateUserParcel(userId: string, parcelId: string, dto: any) {
+  async updateUserParcel(
+    userId: string,
+    parcelId: string,
+    dto: Partial<CreateParcelDto>,
+  ) {
     const parcel = await this.prisma.parcel.findUnique({
       where: { id: parcelId },
     });

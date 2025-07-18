@@ -35,6 +35,10 @@ const routes: Routes = [
     loadComponent: () =>
       import('./support/support.component').then((m) => m.SupportComponent),
   },
+  {
+    path: 'create-parcel',
+    loadComponent: () => import('./create-parcel/create-parcel.component').then(m => m.CreateParcelComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
 

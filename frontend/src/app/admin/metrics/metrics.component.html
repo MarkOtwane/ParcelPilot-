@@ -1,6 +1,12 @@
+<div class="metrics-header">
+  <h1>System Metrics</h1>
+  <div style="margin-bottom: 1rem">
+    <a routerLink="/admin/dashboard" class="btn-primary"
+      >&larr; Back to Dashboard</a
+    >
+  </div>
+</div>
 <div class="metrics" *ngIf="!isLoading; else loading">
-  <h2>System Metrics</h2>
-
   <div class="metrics-cards">
     <div class="metric-card">
       <h4>Total Users</h4>

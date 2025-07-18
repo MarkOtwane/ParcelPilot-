@@ -1,7 +1,7 @@
 <div class="my-parcels-container">
   <div class="my-parcels-header">
     <h1>My Parcels</h1>
-    <a routerLink="/user/create-parcel" class="btn-primary"
+    <a *ngIf="isAdmin" routerLink="/user/create-parcel" class="btn-primary"
       >Create New Parcel</a
     >
   </div>
@@ -35,7 +35,7 @@
             <p><strong>From:</strong> {{ parcel.pickupLocation }}</p>
             <p><strong>To:</strong> {{ parcel.destination }}</p>
             <p><strong>Weight:</strong> {{ parcel.weight }}kg</p>
-            <p><strong>Cost:</strong> ${{ parcel.cost }}</p>
+            <p><strong>Cost:</strong> KES{{ parcel.cost }}</p>
             <p>
               <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
             </p>
@@ -88,7 +88,7 @@
             <p><strong>From:</strong> {{ parcel.pickupLocation }}</p>
             <p><strong>To:</strong> {{ parcel.destination }}</p>
             <p><strong>Weight:</strong> {{ parcel.weight }}kg</p>
-            <p><strong>Cost:</strong> ${{ parcel.cost }}</p>
+            <p><strong>Cost:</strong> KES{{ parcel.cost }}</p>
             <p>
               <strong>Created:</strong> {{ parcel.createdAt | date : "short" }}
             </p>
@@ -133,7 +133,7 @@
           <strong>Weight:</strong> {{ selectedParcel.weight }}kg
         </div>
         <div class="detail-row">
-          <strong>Cost:</strong> ${{ selectedParcel.cost }}
+          <strong>Cost:</strong> KES{{ selectedParcel.cost }}
         </div>
         <div class="detail-row">
           <strong>Created:</strong>

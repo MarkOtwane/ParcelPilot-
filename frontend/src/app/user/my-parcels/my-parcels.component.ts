@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ParcelService } from '../../core/services/parcel.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-my-parcels',
@@ -18,8 +19,9 @@ export class MyParcelsComponent implements OnInit {
   selectedParcel: any = null;
   isEditing = false;
   editForm: FormGroup;
+  isAdmin = false;
 
-  constructor(private parcelService: ParcelService, private fb: FormBuilder) {
+  constructor(private parcelService: ParcelService, private fb: FormBuilder, private authService: AuthService) {
     this.editForm = this.fb.group({
       pickupLocation: ['', [Validators.required]],
       destination: ['', [Validators.required]],
@@ -29,6 +31,11 @@ export class MyParcelsComponent implements OnInit {
   }
 
   async ngOnInit() {
+    const token = this.authService.getToken();
+    if (token) {
+      const payload = this.authService.decodeJwt(token);
+      this.isAdmin = payload?.role === 'ADMIN';
+    }
     await this.loadParcels();
   }
 
