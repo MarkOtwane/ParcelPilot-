@@ -18,7 +18,7 @@ export class ParcelsService {
 
   async createParcel(senderId: string, dto: CreateParcelDto) {
     const sender = await this.prisma.user.findUnique({
-      where: { id: senderId },
+      where: { email: dto.senderEmail.toLowerCase() },
     });
     const receiver = await this.prisma.user.findUnique({
       where: { email: dto.receiverEmail.toLowerCase() },
@@ -31,7 +31,7 @@ export class ParcelsService {
 
     const parcel = await this.prisma.parcel.create({
       data: {
-        senderId,
+        senderId: sender.id,
         receiverId: receiver.id,
         pickupLocation: dto.pickupLocation,
         destination: dto.destination,

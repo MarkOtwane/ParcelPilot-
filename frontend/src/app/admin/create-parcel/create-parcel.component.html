@@ -5,10 +5,8 @@
       <p>Fill in the details below to create a new parcel delivery</p>
     </div>
 
-    <div style="margin-bottom: 1rem">
-      <a routerLink="../dashboard" class="btn-primary"
-        >&larr; Back to Dashboard</a
-      >
+    <div style="margin-bottom: 1rem;">
+      <a [routerLink]="['/admin/dashboard']" class="btn-primary">&larr; Back to Dashboard</a>
     </div>
 
     <form
@@ -16,35 +14,6 @@
       (ngSubmit)="onSubmit()"
       class="create-parcel-form"
     >
-      <div class="form-group">
-        <label for="receiverEmail">Receiver Email</label>
-        <input
-          type="email"
-          id="receiverEmail"
-          formControlName="receiverEmail"
-          placeholder="Enter receiver email"
-          class="form-control"
-          [class.error]="
-            parcelForm.get('receiverEmail')?.invalid &&
-            parcelForm.get('receiverEmail')?.touched
-          "
-        />
-        <div
-          class="error-message"
-          *ngIf="
-            parcelForm.get('receiverEmail')?.invalid &&
-            parcelForm.get('receiverEmail')?.touched
-          "
-        >
-          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['required']"
-            >Receiver email is required</span
-          >
-          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['email']"
-            >Please enter a valid email address</span
-          >
-        </div>
-      </div>
-
       <div class="form-group">
         <label for="senderEmail">Sender Email</label>
         <input
@@ -69,6 +38,35 @@
             >Sender email is required</span
           >
           <span *ngIf="parcelForm.get('senderEmail')?.errors?.['email']"
+            >Please enter a valid email address</span
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="receiverEmail">Receiver Email</label>
+        <input
+          type="email"
+          id="receiverEmail"
+          formControlName="receiverEmail"
+          placeholder="Enter receiver email"
+          class="form-control"
+          [class.error]="
+            parcelForm.get('receiverEmail')?.invalid &&
+            parcelForm.get('receiverEmail')?.touched
+          "
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            parcelForm.get('receiverEmail')?.invalid &&
+            parcelForm.get('receiverEmail')?.touched
+          "
+        >
+          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['required']"
+            >Receiver email is required</span
+          >
+          <span *ngIf="parcelForm.get('receiverEmail')?.errors?.['email']"
             >Please enter a valid email address</span
           >
         </div>

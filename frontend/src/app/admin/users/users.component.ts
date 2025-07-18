@@ -99,4 +99,8 @@ export class UsersComponent implements OnInit {
     this.isEditing = false;
     this.editForm = { name: '', phone: '' };
   }
+
+  onBackToDashboardClick() {
+    console.log('Back to Dashboard button clicked');
+  }
 }

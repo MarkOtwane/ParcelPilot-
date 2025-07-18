@@ -22,10 +22,10 @@ export class PaymentsController {
 
   @Post('initiate')
   initiate(
-    @Request() req: { user: { sub: string } },
+    @Request() req: { user: { sub: string; role: Role } },
     @Body() dto: InitiatePaymentDto,
   ) {
-    return this.paymentsService.initiate(req.user.sub, dto);
+    return this.paymentsService.initiate(req.user.sub, dto, req.user.role);
   }
 
   @Get('my')

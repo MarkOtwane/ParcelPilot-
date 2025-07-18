@@ -4,23 +4,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { PaymentStatus, Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { InitiatePaymentDto } from './dto/initiate-payment.dto';
 import { UpdatePaymentStatusDto } from './dto/update-payment-status.dto';
-import { PaymentMethod, PaymentStatus, Role } from '@prisma/client';
 
 @Injectable()
 export class PaymentsService {
   constructor(private prisma: PrismaService) {}
 
-  async initiate(userId: string, dto: InitiatePaymentDto) {
+  async initiate(userId: string, dto: InitiatePaymentDto, role: Role) {
     const parcel = await this.prisma.parcel.findUnique({
       where: { id: dto.parcelId },
     });
 
     if (!parcel) throw new NotFoundException('Parcel not found');
 
-    if (parcel.senderId !== userId) {
+    if (role !== 'ADMIN' && parcel.senderId !== userId) {
       throw new ForbiddenException('You can only pay for your own parcel');
     }
 

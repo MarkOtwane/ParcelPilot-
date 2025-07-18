@@ -144,3 +144,153 @@
     padding: 40px;
     grid-column: 1 / -1;
 }
+
+/* Users Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+thead th {
+    background: #1976d2;
+    color: #fff;
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    letter-spacing: 0.5px;
+}
+
+tbody td {
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid #e3e3e3;
+    color: #333;
+    font-size: 15px;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: #f5faff;
+}
+
+th,
+td {
+    vertical-align: middle;
+}
+
+button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 16px;
+    margin-right: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:disabled {
+    background: #bdbdbd;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #125ea2;
+}
+
+.error-message {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    min-width: 320px;
+    max-width: 95vw;
+}
+
+.modal-actions {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
+@media (max-width: 600px) {
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody td {
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid #e3e3e3;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    tbody td:before {
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 0.75rem;
+        font-weight: 600;
+        color: #1976d2;
+        content: attr(data-label);
+    }
+}
+
+.btn-primary,
+a.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #1976d2 100%);
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+
+.btn-primary:hover,
+a.btn-primary:hover {
+    background: linear-gradient(135deg, #1976d2 0%, #125ea2 100%);
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
+}

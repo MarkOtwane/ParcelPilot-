@@ -1,9 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateParcelDto {
   @IsEmail()
   receiverEmail: string;
+
+  @IsEmail()
+  senderEmail: string;
 
   @IsString()
   @IsNotEmpty()
