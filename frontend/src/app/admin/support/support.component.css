@@ -5,50 +5,97 @@
     margin-bottom: 2rem;
   }
 
+  .tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
   .ticket-card {
     background: #fff;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid #607d8b;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: box-shadow 0.2s;
+  }
 
-    p {
-      margin: 0.3rem 0;
-    }
+  .ticket-card:hover {
+    box-shadow: 0 6px 24px rgba(25, 118, 210, 0.16);
+  }
 
-    .response {
-      background: #e8f5e9;
-      padding: 0.5rem;
-      border-radius: 6px;
-      margin-top: 0.5rem;
-    }
+  .ticket-card p {
+    margin: 0.2rem 0;
+    color: #444;
+    font-size: 15px;
+  }
 
-    textarea {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-top: 0.5rem;
-    }
+  .response {
+    background: #e6f4ea;
+    color: #27ae60;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+  }
 
-    button {
-      margin-top: 0.5rem;
-      margin-right: 0.5rem;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: #607d8b;
-      color: white;
+  textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 0.5rem;
+  }
 
-      &:hover {
-        background-color: #455a64;
-      }
+  button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 16px;
+    margin-right: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
 
-      &.cancel {
-        background-color: #9e9e9e;
-      }
-    }
+  button.cancel {
+    background: #e74c3c;
+  }
+
+  button:hover:not(:disabled) {
+    background: #125ea2;
+  }
+}
+
+.btn-primary,
+a.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #1976d2 100%);
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+
+.btn-primary:hover,
+a.btn-primary:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #125ea2 100%);
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
+}
+
+@media (max-width: 700px) {
+  .tickets-grid {
+    grid-template-columns: 1fr;
   }
 }

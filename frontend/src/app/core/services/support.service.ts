@@ -29,4 +29,13 @@ export class SupportService {
     );
     return apiResponse.data;
   }
+
+  async getUserTickets(email: string): Promise<any[]> {
+    const response = await firstValueFrom(
+      this.http.get<ApiResponse<any[]>>(
+        `${API}?email=${encodeURIComponent(email)}`
+      )
+    );
+    return response.data;
+  }
 }

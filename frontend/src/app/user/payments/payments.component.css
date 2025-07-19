@@ -24,3 +24,26 @@
     }
   }
 }
+
+.btn-primary, a.btn-primary {
+  background: linear-gradient(135deg, #5a8dee 0%, #3f51b5 100%);
+  color: #fff !important;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 4px 18px rgba(90, 141, 238, 0.12);
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover, a.btn-primary:hover {
+  background: linear-gradient(135deg, #3f51b5 0%, #5a8dee 100%);
+  text-decoration: none;
+  box-shadow: 0 8px 32px rgba(90, 141, 238, 0.18);
+  transform: scale(1.04);
+}

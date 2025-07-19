@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ParcelService } from '../../core/services/parcel.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-parcels',
   templateUrl: './parcels.component.html',
   styleUrls: ['./parcels.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class ParcelsComponent implements OnInit {
   parcels: any[] = [];

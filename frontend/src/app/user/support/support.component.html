@@ -1,4 +1,7 @@
 <div class="support-container">
+  <div style="margin-bottom: 1rem;">
+    <a routerLink="/user" class="btn-primary">&larr; Back to Dashboard</a>
+  </div>
   <div class="support-card">
     <div class="support-header">
       <h1>Contact Support</h1>
@@ -25,6 +28,7 @@
             supportForm.get('email')?.invalid &&
             supportForm.get('email')?.touched
           "
+          (blur)="onEmailBlur()"
         />
         <div
           class="error-message"
@@ -88,5 +92,23 @@
         <span *ngIf="!loading">Send Message</span>
       </button>
     </form>
+    <div class="chat-history" *ngIf="tickets.length > 0">
+      <h3>Support Conversation</h3>
+      <div class="chat-messages">
+        <div *ngFor="let t of tickets" class="chat-message user">
+          <div class="chat-meta">
+            You
+            <span class="chat-date">{{ t.createdAt | date : "short" }}</span>
+          </div>
+          <div class="chat-bubble">{{ t.message }}</div>
+          <div *ngIf="t.response" class="chat-message admin">
+            <div class="chat-meta">
+              Admin <span class="chat-date">(replied)</span>
+            </div>
+            <div class="chat-bubble admin-reply">{{ t.response }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -9,7 +9,7 @@
 <div class="admin-support" *ngIf="!isLoading; else loading">
   <h2>Support Tickets</h2>
 
-  <div *ngIf="tickets.length > 0; else noTickets">
+  <div *ngIf="tickets.length > 0; else noTickets" class="tickets-grid">
     <div class="ticket-card" *ngFor="let t of tickets">
       <p><strong>Email:</strong> {{ t.email }}</p>
       <p><strong>Message:</strong> {{ t.message }}</p>

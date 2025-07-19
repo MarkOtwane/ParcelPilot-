@@ -162,6 +162,28 @@
   font-size: 14px;
 }
 
+.btn-danger, button.btn-danger {
+  background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.08);
+  margin-top: 2rem;
+}
+
+.btn-danger:hover, button.btn-danger:hover {
+  background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%);
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.12);
+}
+
 @media (max-width: 900px) {
 
   .parcel-management table,

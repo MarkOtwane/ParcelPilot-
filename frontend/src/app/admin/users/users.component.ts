@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { NotificationService } from '../../shared/components/notification/notification.service';
 
@@ -9,7 +10,7 @@ import { NotificationService } from '../../shared/components/notification/notifi
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class UsersComponent implements OnInit {
   users: any[] = [];

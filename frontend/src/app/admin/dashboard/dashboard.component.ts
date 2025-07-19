@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MetricsService } from '../../core/services/metrics.service';
 import { ParcelService } from '../../core/services/parcel.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -25,7 +27,9 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private metricsService: MetricsService,
-    private parcelService: ParcelService
+    private parcelService: ParcelService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -77,6 +81,11 @@ export class DashboardComponent implements OnInit {
 
   async approveParcel(parcelId: string) {
     await this.updateStatus(parcelId, 'IN_TRANSIT');
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 
   get totalWeight(): number {

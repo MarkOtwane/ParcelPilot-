@@ -6,18 +6,20 @@ export class MetricsService {
   constructor(private prisma: PrismaService) {}
 
   async getDashboardStats() {
-    const [users, parcels, payments, completedParcels] = await Promise.all([
-      this.prisma.user.count({ where: { deletedAt: null } }),
-      this.prisma.parcel.count({ where: { deletedAt: null } }),
-      this.prisma.payment.count(),
-      this.prisma.parcel.count({ where: { status: 'DELIVERED' } }),
-    ]);
+    const [users, parcels, paymentsCount, completedParcels, paymentsSum] =
+      await Promise.all([
+        this.prisma.user.count({ where: { deletedAt: null } }),
+        this.prisma.parcel.count({ where: { deletedAt: null } }),
+        this.prisma.payment.count(),
+        this.prisma.parcel.count({ where: { status: 'DELIVERED' } }),
+        this.prisma.payment.aggregate({ _sum: { amount: true } }),
+      ]);
 
     return {
       users,
       parcels,
       completedParcels,
-      totalPayments: payments,
+      totalPayments: paymentsSum._sum.amount || 0,
     };
   }
 }

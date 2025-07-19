@@ -12,6 +12,9 @@
     style="margin-top: 2rem"
     >Create New Parcel</a
   >
+  <button class="btn-danger" style="margin-top: auto" (click)="logout()">
+    Logout
+  </button>
 </div>
 <div class="admin-dashboard" *ngIf="!isLoading; else loading">
   <h2>Admin Dashboard</h2>
