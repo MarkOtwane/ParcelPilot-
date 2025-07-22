@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { ParcelCreatedEmailContext } from '../mailer/mailer.service';
 import {
   ForbiddenException,
@@ -58,30 +57,30 @@ export class ParcelsService {
       });
 
     // Send SMS notifications (non-blocking)
-    if (sender.phone) {
-      try {
-        this.mailer.sendSms(
-          sender.phone,
-          `Your parcel has been created. Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}, Cost: KES ${parcel.cost}`,
-        );
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        console.error('Failed to send SMS to sender:', errorMessage);
-      }
-    }
-    if (receiver.phone) {
-      try {
-        this.mailer.sendSms(
-          receiver.phone,
-          `A parcel is on its way to you! Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}`,
-        );
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        console.error('Failed to send SMS to receiver:', errorMessage);
-      }
-    }
+    // if (sender.phone) {
+    //   try {
+    //     this.mailer.sendSms(
+    //       sender.phone,
+    //       `Your parcel has been created. Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}, Cost: KES ${parcel.cost}`,
+    //     );
+    //   } catch (error: unknown) {
+    //     const errorMessage =
+    //       error instanceof Error ? error.message : String(error);
+    //     console.error('Failed to send SMS to sender:', errorMessage);
+    //   }
+    // }
+    // if (receiver.phone) {
+    //   try {
+    //     this.mailer.sendSms(
+    //       receiver.phone,
+    //       `A parcel is on its way to you! Pickup: ${parcel.pickupLocation}, Destination: ${parcel.destination}`,
+    //     );
+    //   } catch (error: unknown) {
+    //     const errorMessage =
+    //       error instanceof Error ? error.message : String(error);
+    //     console.error('Failed to send SMS to receiver:', errorMessage);
+    //   }
+    // }
 
     return parcel;
   }
@@ -167,30 +166,30 @@ export class ParcelsService {
       });
 
     // Send SMS notifications (non-blocking)
-    if (parcel.sender.phone) {
-      try {
-        this.mailer.sendSms(
-          parcel.sender.phone,
-          `Parcel status updated: ${dto.status}`,
-        );
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        console.error('Failed to send status SMS to sender:', errorMessage);
-      }
-    }
-    if (parcel.receiver.phone) {
-      try {
-        this.mailer.sendSms(
-          parcel.receiver.phone,
-          `Parcel status updated: ${dto.status}`,
-        );
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        console.error('Failed to send status SMS to receiver:', errorMessage);
-      }
-    }
+    // if (parcel.sender.phone) {
+    //   try {
+    //     this.mailer.sendSms(
+    //       parcel.sender.phone,
+    //       `Parcel status updated: ${dto.status}`,
+    //     );
+    //   } catch (error: unknown) {
+    //     const errorMessage =
+    //       error instanceof Error ? error.message : String(error);
+    //     console.error('Failed to send status SMS to sender:', errorMessage);
+    //   }
+    // }
+    // if (parcel.receiver.phone) {
+    //   try {
+    //     this.mailer.sendSms(
+    //       parcel.receiver.phone,
+    //       `Parcel status updated: ${dto.status}`,
+    //     );
+    //   } catch (error: unknown) {
+    //     const errorMessage =
+    //       error instanceof Error ? error.message : String(error);
+    //     console.error('Failed to send status SMS to receiver:', errorMessage);
+    //   }
+    // }
 
     return updated;
   }

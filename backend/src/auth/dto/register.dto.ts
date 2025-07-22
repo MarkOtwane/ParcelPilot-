@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { IsEmail, IsNotEmpty, MinLength, Matches } from 'class-validator';
 
 export class RegisterDto {
@@ -9,7 +8,7 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty()
-  phone: string;
+  phone?: string;
 
   @MinLength(6)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/, {

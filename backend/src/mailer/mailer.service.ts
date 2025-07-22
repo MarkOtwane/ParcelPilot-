@@ -7,7 +7,7 @@ import {
 import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { ParcelStatus } from '@prisma/client';
-import { Twilio } from 'twilio';
+// import { Twilio } from 'twilio';
 
 interface Parcel {
   pickupLocation: string;
@@ -35,51 +35,51 @@ interface ParcelStatusUpdateEmailContext {
 @Injectable()
 export class MailerService {
   private readonly logger = new Logger(MailerService.name);
-  private twilio: Twilio;
+  // private twilio: Twilio;
 
   constructor(
     private readonly mailer: NestMailerService,
     private readonly configService: ConfigService,
   ) {
-    this.twilio = new Twilio(
-      this.configService.get('TWILIO_ACCOUNT_SID'),
-      this.configService.get('TWILIO_AUTH_TOKEN'),
-    );
+    // this.twilio = new Twilio(
+    //   this.configService.get('TWILIO_ACCOUNT_SID'),
+    //   this.configService.get('TWILIO_AUTH_TOKEN'),
+    // );
   }
 
-  private normalizeKenyanNumber(phone: string): string {
-    const normalized = phone.trim();
-    if (normalized.startsWith('+254')) {
-      return normalized;
-    }
-    if (normalized.startsWith('07')) {
-      return '+254' + normalized.slice(1);
-    }
-    if (normalized.startsWith('01')) {
-      return '+254' + normalized;
-    }
-    throw new Error(
-      'Phone number must be a valid Kenyan number starting with +254, 07, or 01',
-    );
-  }
+  // private normalizeKenyanNumber(phone: string): string {
+  //   const normalized = phone.trim();
+  //   if (normalized.startsWith('+254')) {
+  //     return normalized;
+  //   }
+  //   if (normalized.startsWith('07')) {
+  //     return '+254' + normalized.slice(1);
+  //   }
+  //   if (normalized.startsWith('01')) {
+  //     return '+254' + normalized;
+  //   }
+  //   throw new Error(
+  //     'Phone number must be a valid Kenyan number starting with +254, 07, or 01',
+  //   );
+  // }
 
-  async sendSms(to: string, body: string): Promise<void> {
-    try {
-      const normalizedTo = this.normalizeKenyanNumber(to);
-      await this.twilio.messages.create({
-        body,
-        from: this.configService.get('TWILIO_PHONE_NUMBER'),
-        to: normalizedTo,
-      });
-      this.logger.log(`SMS sent successfully to ${normalizedTo}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to send SMS to ${to}:`,
-        error instanceof Error ? error.message : String(error),
-      );
-      throw new InternalServerErrorException('Failed to send SMS');
-    }
-  }
+  // async sendSms(to: string, body: string): Promise<void> {
+  //   try {
+  //     const normalizedTo = this.normalizeKenyanNumber(to);
+  //     await this.twilio.messages.create({
+  //       body,
+  //       from: this.configService.get('TWILIO_PHONE_NUMBER'),
+  //       to: normalizedTo,
+  //     });
+  //     this.logger.log(`SMS sent successfully to ${normalizedTo}`);
+  //   } catch (error) {
+  //     this.logger.error(
+  //       `Failed to send SMS to ${to}:`,
+  //       error instanceof Error ? error.message : String(error),
+  //     );
+  //     throw new InternalServerErrorException('Failed to send SMS');
+  //   }
+  // }
 
   async sendWelcomeEmail(
     email: string,
@@ -88,7 +88,7 @@ export class MailerService {
     try {
       await this.mailer.sendMail({
         to: email,
-        subject: `Welcome to ${this.configService.get('APP_NAME')} 🚀`,
+        subject: `Welcome to ${this.configService.get('./templates/welcome.hbs')} 🚀`,
         template: 'welcome',
         context: {
           ...context,
