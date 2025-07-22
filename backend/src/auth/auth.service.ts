@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { ResetPasswordEmailContext } from '../mailer/mailer.service';
 import {
-  Injectable,
   BadRequestException,
-  UnauthorizedException,
-  NotFoundException,
   ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { MailerService } from '../mailer/mailer.service';
-import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +50,7 @@ export class AuthService {
       },
     });
 
-    await this.mailer.sendWelcomeEmail(user.email, user.name);
+    await this.mailer.sendWelcomeEmail(user.email, { name: user.name });
 
     return {
       message: 'User registered successfully.',
@@ -88,8 +88,11 @@ export class AuthService {
     }
 
     const token = this.generateJwt(user.id, user.role, user.email, '15m');
-
-    await this.mailer.sendResetPasswordEmail(user.email, token);
+    const resetPasswordEmailContext: ResetPasswordEmailContext = { token };
+    await this.mailer.sendResetPasswordEmail(
+      user.email,
+      resetPasswordEmailContext,
+    );
 
     return { message: 'Password reset link sent to email.' };
   }
@@ -112,7 +115,12 @@ export class AuthService {
     return { message: 'Password updated successfully.' };
   }
 
-  private generateJwt(userId: string, role: Role, email: string, expiresIn = '7d') {
+  private generateJwt(
+    userId: string,
+    role: Role,
+    email: string,
+    expiresIn = '7d',
+  ) {
     return this.jwtService.sign({ sub: userId, role, email }, { expiresIn });
   }
 }

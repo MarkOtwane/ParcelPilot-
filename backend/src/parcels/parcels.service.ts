@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { ParcelCreatedEmailContext } from '../mailer/mailer.service';
 import {
   ForbiddenException,
   Injectable,
@@ -47,8 +48,9 @@ export class ParcelsService {
     });
 
     // Send email notification (non-blocking)
+    const emailContext: ParcelCreatedEmailContext = { parcel };
     this.mailer
-      .sendParcelCreatedEmail(sender.email, receiver.email, parcel)
+      .sendParcelCreatedEmail(sender.email, receiver.email, emailContext)
       .catch((error: unknown) => {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
@@ -156,7 +158,7 @@ export class ParcelsService {
       .sendParcelStatusUpdateEmail(
         parcel.sender.email,
         parcel.receiver.email,
-        dto.status,
+        { status: dto.status }, // Create an instance of ParcelStatusUpdateEmailContext
       )
       .catch((error: unknown) => {
         const errorMessage =
