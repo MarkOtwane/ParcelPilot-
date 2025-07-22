@@ -50,30 +50,25 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.loading = true;
       this.error = '';
-      
       try {
         const { name, email, phone, password } = this.registerForm.value;
+        console.log('Attempting registration:', { name, email, phone, password });
         const result = await this.authService.register({ name, email, phone, password });
-        
-        if (result.role === 'ADMIN') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/user']);
-        }
+        console.log('Registration result:', result);
+        this.authService.logout();
+        this.router.navigate(['/auth/login'], { queryParams: { registered: 'true' } });
       } catch (error: any) {
         console.error('Registration error:', error);
         if (error.error?.message?.message) {
-          // Backend error message
           this.error = error.error.message.message;
         } else if (error.error?.message) {
-          // Direct error message
           this.error = error.error.message;
         } else if (error.message) {
-          // Generic error message
           this.error = error.message;
         } else {
           this.error = 'Registration failed. Please try again.';
         }
+        alert('Registration failed: ' + this.error);
       } finally {
         this.loading = false;
       }
