@@ -9,5 +9,5 @@ import { NotificationComponent } from './shared/components/notification/notifica
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'Parcel Pilot';
 }

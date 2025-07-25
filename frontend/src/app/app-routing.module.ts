@@ -1,21 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
-import { RolesGuard } from './core/guards/roles.guard';
+import { authGuard } from './core/guards/auth.guard';
+import { rolesGuard } from './core/guards/roles.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   {
     path: 'user',
-    canActivate: [AuthGuard, RolesGuard],
+    canActivate: [authGuard, rolesGuard],
     data: { roles: ['USER'] },
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
   },
 
   {
     path: 'admin',
-    canActivate: [AuthGuard, RolesGuard],
+    canActivate: [authGuard, rolesGuard],
     data: { roles: ['ADMIN'] },
     loadChildren: () =>
       import('./admin/admin.module').then((m) => m.AdminModule),
@@ -29,13 +29,13 @@ const routes: Routes = [
   { path: '**', redirectTo: '/not-found' },
   {
     path: 'user',
-    canActivate: [AuthGuard, RolesGuard],
+    canActivate: [authGuard, rolesGuard],
     data: { roles: ['USER'] },
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
   },
   {
     path: 'admin',
-    canActivate: [AuthGuard, RolesGuard],
+    canActivate: [authGuard, rolesGuard],
     data: { roles: ['ADMIN'] },
     loadChildren: () =>
       import('./admin/admin.module').then((m) => m.AdminModule),
