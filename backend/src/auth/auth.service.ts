@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { ResetPasswordEmailContext } from '../mailer/mailer.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -12,7 +11,10 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { MailerService } from '../mailer/mailer.service';
+import {
+  MailerService,
+  ResetPasswordEmailContext,
+} from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -44,9 +46,9 @@ export class AuthService {
       data: {
         name: dto.name,
         email: dto.email.toLowerCase(),
-        phone: dto.phone,
         password: hashedPassword,
         role: Role.USER,
+        phone: dto.phone || '1234567890', // provide a default value if phone is not provided
       },
     });
 
@@ -121,6 +123,9 @@ export class AuthService {
     email: string,
     expiresIn = '7d',
   ) {
-    return this.jwtService.sign({ sub: userId, role, email }, { expiresIn });
+    return this.jwtService.sign(
+      { sub: userId, role, email },
+      { secret: process.env.JWT_SECRET, expiresIn },
+    );
   }
 }

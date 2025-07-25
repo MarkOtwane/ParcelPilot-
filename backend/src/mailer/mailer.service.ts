@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { ParcelStatus } from '@prisma/client';
-// import { Twilio } from 'twilio';
 
 interface Parcel {
   pickupLocation: string;
@@ -35,51 +34,19 @@ interface ParcelStatusUpdateEmailContext {
 @Injectable()
 export class MailerService {
   private readonly logger = new Logger(MailerService.name);
-  // private twilio: Twilio;
 
   constructor(
     private readonly mailer: NestMailerService,
     private readonly configService: ConfigService,
   ) {
-    // this.twilio = new Twilio(
-    //   this.configService.get('TWILIO_ACCOUNT_SID'),
-    //   this.configService.get('TWILIO_AUTH_TOKEN'),
-    // );
+    // Validate required environment variables
+    const requiredVars = ['APP_NAME', 'FRONTEND_URL'];
+    requiredVars.forEach((varName) => {
+      if (!this.configService.get<string>(varName)) {
+        throw new Error(`Missing required environment variable: ${varName}`);
+      }
+    });
   }
-
-  // private normalizeKenyanNumber(phone: string): string {
-  //   const normalized = phone.trim();
-  //   if (normalized.startsWith('+254')) {
-  //     return normalized;
-  //   }
-  //   if (normalized.startsWith('07')) {
-  //     return '+254' + normalized.slice(1);
-  //   }
-  //   if (normalized.startsWith('01')) {
-  //     return '+254' + normalized;
-  //   }
-  //   throw new Error(
-  //     'Phone number must be a valid Kenyan number starting with +254, 07, or 01',
-  //   );
-  // }
-
-  // async sendSms(to: string, body: string): Promise<void> {
-  //   try {
-  //     const normalizedTo = this.normalizeKenyanNumber(to);
-  //     await this.twilio.messages.create({
-  //       body,
-  //       from: this.configService.get('TWILIO_PHONE_NUMBER'),
-  //       to: normalizedTo,
-  //     });
-  //     this.logger.log(`SMS sent successfully to ${normalizedTo}`);
-  //   } catch (error) {
-  //     this.logger.error(
-  //       `Failed to send SMS to ${to}:`,
-  //       error instanceof Error ? error.message : String(error),
-  //     );
-  //     throw new InternalServerErrorException('Failed to send SMS');
-  //   }
-  // }
 
   async sendWelcomeEmail(
     email: string,
@@ -88,11 +55,11 @@ export class MailerService {
     try {
       await this.mailer.sendMail({
         to: email,
-        subject: `Welcome to ${this.configService.get('./templates/welcome.hbs')} 🚀`,
+        subject: `Welcome to ${this.configService.get<string>('APP_NAME')} 🚀`,
         template: 'welcome',
         context: {
           ...context,
-          appName: this.configService.get('APP_NAME'),
+          appName: this.configService.get<string>('APP_NAME'),
           currentYear: new Date().getFullYear(),
         },
       });
@@ -100,8 +67,8 @@ export class MailerService {
       this.logger.log(`Welcome email sent successfully to ${email}`);
     } catch (error) {
       this.logger.error(
-        `Failed to send welcome email to ${email}:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send welcome email to ${email}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException('Failed to send welcome email');
     }
@@ -112,7 +79,7 @@ export class MailerService {
     context: ResetPasswordEmailContext,
   ): Promise<void> {
     try {
-      const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${context.token}`;
+      const resetLink = `${this.configService.get<string>('FRONTEND_URL')}/reset-password?token=${context.token}`;
 
       await this.mailer.sendMail({
         to: email,
@@ -120,7 +87,7 @@ export class MailerService {
         template: 'reset-password',
         context: {
           resetLink,
-          appName: this.configService.get('APP_NAME'),
+          appName: this.configService.get<string>('APP_NAME'),
           currentYear: new Date().getFullYear(),
         },
       });
@@ -128,8 +95,8 @@ export class MailerService {
       this.logger.log(`Password reset email sent successfully to ${email}`);
     } catch (error) {
       this.logger.error(
-        `Failed to send reset password email to ${email}:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send reset password email to ${email}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException(
         'Failed to send reset password email',
@@ -149,7 +116,7 @@ export class MailerService {
         template: 'parcel-created',
         context: {
           ...context.parcel,
-          appName: this.configService.get('APP_NAME'),
+          appName: this.configService.get<string>('APP_NAME'),
           currentYear: new Date().getFullYear(),
         },
       });
@@ -159,8 +126,8 @@ export class MailerService {
       );
     } catch (error) {
       this.logger.error(
-        `Failed to send parcel created email:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send parcel created email to ${senderEmail}, ${receiverEmail}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException(
         'Failed to send parcel created email',
@@ -180,7 +147,7 @@ export class MailerService {
         template: 'parcel-status',
         context: {
           status: context.status,
-          appName: this.configService.get('APP_NAME'),
+          appName: this.configService.get<string>('APP_NAME'),
           currentYear: new Date().getFullYear(),
         },
       });
@@ -190,8 +157,8 @@ export class MailerService {
       );
     } catch (error) {
       this.logger.error(
-        `Failed to send parcel status update email:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send parcel status update email to ${senderEmail}, ${receiverEmail}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException(
         'Failed to send parcel status update email',
@@ -202,7 +169,7 @@ export class MailerService {
   async sendCustomEmail(
     to: string | string[],
     subject: string,
-    template: string,
+    template: string, // Missing type and syntax error in original
     context: Record<string, any>,
   ): Promise<void> {
     try {
@@ -212,7 +179,7 @@ export class MailerService {
         template,
         context: {
           ...context,
-          appName: this.configService.get('APP_NAME'),
+          appName: this.configService.get<string>('APP_NAME'),
           currentYear: new Date().getFullYear(),
         },
       });
@@ -222,8 +189,8 @@ export class MailerService {
       );
     } catch (error) {
       this.logger.error(
-        `Failed to send custom email:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send custom email to ${Array.isArray(to) ? to.join(', ') : to}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException('Failed to send custom email');
     }
@@ -231,24 +198,23 @@ export class MailerService {
 
   async sendTestEmail(email: string): Promise<void> {
     try {
+      // Use welcome.hbs as fallback since test.hbs is not provided
       await this.mailer.sendMail({
         to: email,
-        subject: 'Test Email',
-        template: 'test',
+        subject: 'Test Email from SendIT',
+        template: 'welcome', // Fallback to welcome template
         context: {
           name: 'Test User',
-          email,
-          appName: this.configService.get('APP_NAME'),
-          currentYear: new Date().getFullYear().toString(),
-          currentDate: new Date().toISOString(),
+          appName: this.configService.get<string>('APP_NAME'),
+          currentYear: new Date().getFullYear(),
         },
       });
 
       this.logger.log(`Test email sent successfully to ${email}`);
     } catch (error) {
       this.logger.error(
-        `Failed to send test email to ${email}:`,
-        error instanceof Error ? error.message : String(error),
+        `Failed to send test email to ${email}: ${error.message}`,
+        error.stack,
       );
       throw new InternalServerErrorException('Failed to send test email');
     }
