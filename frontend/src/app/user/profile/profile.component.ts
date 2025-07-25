@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UserService } from 'src/app/core/services/user.service';
-import { NotificationService } from 'src/app/shared/components/notification/notification.service';
+import { UserService } from '../../core/services/user.service';
+import { NotificationService } from '../../shared/components/notification/notification.service';
 
 @Component({
   selector: 'app-profile',
