@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
 import {
   Injectable,
@@ -66,9 +65,11 @@ export class MailerService {
 
       this.logger.log(`Welcome email sent successfully to ${email}`);
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send welcome email to ${email}: ${error.message}`,
-        error.stack,
+        `Failed to send welcome email to ${email}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException('Failed to send welcome email');
     }
@@ -94,9 +95,11 @@ export class MailerService {
 
       this.logger.log(`Password reset email sent successfully to ${email}`);
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send reset password email to ${email}: ${error.message}`,
-        error.stack,
+        `Failed to send reset password email to ${email}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException(
         'Failed to send reset password email',
@@ -125,9 +128,11 @@ export class MailerService {
         `Parcel created email sent successfully to ${senderEmail} and ${receiverEmail}`,
       );
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send parcel created email to ${senderEmail}, ${receiverEmail}: ${error.message}`,
-        error.stack,
+        `Failed to send parcel created email to ${senderEmail}, ${receiverEmail}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException(
         'Failed to send parcel created email',
@@ -156,9 +161,11 @@ export class MailerService {
         `Parcel status update email sent successfully to ${senderEmail} and ${receiverEmail}`,
       );
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send parcel status update email to ${senderEmail}, ${receiverEmail}: ${error.message}`,
-        error.stack,
+        `Failed to send parcel status update email to ${senderEmail}, ${receiverEmail}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException(
         'Failed to send parcel status update email',
@@ -169,7 +176,7 @@ export class MailerService {
   async sendCustomEmail(
     to: string | string[],
     subject: string,
-    template: string, // Missing type and syntax error in original
+    template: string,
     context: Record<string, any>,
   ): Promise<void> {
     try {
@@ -188,9 +195,11 @@ export class MailerService {
         `Custom email sent successfully to ${Array.isArray(to) ? to.join(', ') : to}`,
       );
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send custom email to ${Array.isArray(to) ? to.join(', ') : to}: ${error.message}`,
-        error.stack,
+        `Failed to send custom email to ${Array.isArray(to) ? to.join(', ') : to}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException('Failed to send custom email');
     }
@@ -212,9 +221,11 @@ export class MailerService {
 
       this.logger.log(`Test email sent successfully to ${email}`);
     } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const errStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send test email to ${email}: ${error.message}`,
-        error.stack,
+        `Failed to send test email to ${email}: ${errMsg}`,
+        errStack,
       );
       throw new InternalServerErrorException('Failed to send test email');
     }

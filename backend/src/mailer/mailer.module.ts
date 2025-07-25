@@ -1,18 +1,20 @@
+import { MailerModule as NestMailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailerModule as NestMailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { MailerService } from './mailer.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, // Make ConfigModule available globally
     }),
     NestMailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
+        // Validate environment variables
         const mailUser = config.get<string>('MAIL_USER');
         const mailPass = config.get<string>('MAIL_PASS');
         const mailFrom = config.get<string>('MAIL_FROM');
@@ -27,27 +29,27 @@ import { MailerService } from './mailer.service';
           transport: {
             host: 'smtp.gmail.com',
             port: 587,
-            secure: false,
+            secure: false, // Use STARTTLS
             auth: {
               user: mailUser,
               pass: mailPass,
             },
             tls: {
-              rejectUnauthorized: false,
+              rejectUnauthorized: false, // Consider removing in production
             },
           },
           defaults: {
             from: `"${config.get<string>('APP_NAME', 'SendIT')} Team" <${mailFrom}>`,
           },
           template: {
-            dir: join(__dirname, 'templates'), // Points to dist/src/mailer/templates
+            dir: join(process.cwd(), 'src/mailer/templates'),
             adapter: new HandlebarsAdapter(),
             options: {
-              strict: true,
+              strict: true, // Fail if template variables are missing
             },
           },
           options: {
-            timeout: 30000,
+            timeout: 30000, // 30-second connection timeout
           },
         };
       },
