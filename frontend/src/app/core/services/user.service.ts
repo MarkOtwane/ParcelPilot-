@@ -3,7 +3,11 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 
-const API = 'http://localhost:3000/users';
+import { environment } from '../../../../enviroment/environment';
+
+const API = environment.apiUrl + '/users';
+
+// const API = 'http://localhost:3000/users';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

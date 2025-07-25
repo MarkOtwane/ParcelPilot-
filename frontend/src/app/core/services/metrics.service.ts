@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 
-const API = 'http://localhost:3000/metrics';
+import { environment } from '../../../../enviroment/environment';
+
+const API = environment.apiUrl + '/metrics';
 
 @Injectable({ providedIn: 'root' })
 export class MetricsService {

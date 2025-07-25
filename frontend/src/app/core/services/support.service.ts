@@ -3,7 +3,11 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 
-const API = 'http://localhost:3000/support';
+import { environment } from '../../../../enviroment/environment';
+
+const API = environment.apiUrl + '/support';
+
+// const API = 'http://localhost:3000/support';
 
 @Injectable({ providedIn: 'root' })
 export class SupportService {

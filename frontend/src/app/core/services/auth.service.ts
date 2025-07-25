@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../../enviroment/environment.prod';
 
-const API = 'http://localhost:3000/auth'; // Adjust as needed
+const API = environment.apiUrl + '/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
